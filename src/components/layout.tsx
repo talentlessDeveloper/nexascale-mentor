@@ -4,7 +4,7 @@ import { ThemeProvider } from "./themes/theme-provider";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system">
+    <ThemeProvider attribute="class" defaultTheme="dark">
       <Header />
       <main>{children}</main>
     </ThemeProvider>
