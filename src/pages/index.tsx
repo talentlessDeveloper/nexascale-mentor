@@ -15,11 +15,11 @@ export default function Home() {
       </Head>
       <div className=" flex min-h-screen flex-col items-center justify-center ">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 text-center ">
-          <h1 className="max-w-3xl text-center text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Welcome to <span className="text-accent">Nexascale</span> Frontend
-            Mentor
+          <h1 className="max-w-3xl text-center text-5xl font-extrabold tracking-tight  sm:text-[5rem]">
+            Welcome to <span className="text-accent">Nexascale</span>{" "}
+            <span className="text-primary">Frontend Mentor</span>
           </h1>
-
+          <p className="">Lorem ipsum dolor sit amet.</p>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-accent-foreground">
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
