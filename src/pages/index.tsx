@@ -13,7 +13,7 @@ export default function Home() {
         <meta name="description" content="NexaSale Frontend Mentor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className=" flex min-h-screen flex-col items-center justify-center ">
+      <div className="font-inter flex min-h-screen flex-col items-center justify-center ">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 text-center ">
           <h1 className="max-w-3xl text-center text-5xl font-extrabold tracking-tight  sm:text-[5rem]">
             Welcome to <span className="text-accent">Nexascale</span>{" "}
