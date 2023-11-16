@@ -1,4 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { fontFamily } = require("tailwindcss/defaultTheme");
+
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -17,6 +22,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        inter: ["var(--font-inter)", ...fontFamily.sans],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
