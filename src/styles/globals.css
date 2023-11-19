@@ -77,6 +77,13 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  .after-content {
+    @apply after:content-[''] after:bg-accent after:absolute after:h-1 after:w-full 
+    after:left-0 after:-bottom-4 after:transform after:scale-x-0 after:transition-transform;
+  }
+}
+
 
 /* .test {
   background-color: hsl(31 100% 58%);
