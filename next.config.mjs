@@ -18,11 +18,21 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: [
-      "images.unsplash.com",
-      "media.istockphoto.com",
-      "lh3.googleusercontent.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname:  "media.istockphoto.com",
+      },
+      {
+        protocol: "https",
+        hostname:  "lh3.googleusercontent.com",
+      },
     ],
+   
   },
 };
 
