@@ -25,6 +25,10 @@ const config = {
       },
       {
         protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
+      {
+        protocol: "https",
         hostname:  "media.istockphoto.com",
       },
       {
