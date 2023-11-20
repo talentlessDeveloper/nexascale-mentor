@@ -1,28 +1,39 @@
-"use client"
-import {useState} from "react"
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "../themes/toggle-theme";
-import { ChevronUp,ChevronDown,X ,Menu, Home, User, LogOut, Globe, Code, TabletSmartphone} from 'lucide-react';
-
-
+import {
+  ChevronUp,
+  ChevronDown,
+  X,
+  Menu,
+  Home,
+  User,
+  LogOut,
+  Globe,
+  Code,
+  TabletSmartphone,
+  Github,
+} from "lucide-react";
+import { Button } from "../ui/button";
 
 const Header = () => {
-  const isLoggedin = true
+  const isLoggedin = true;
   const [dropdown, setDropdown] = useState<boolean>(false);
-  const [mobile, setMobile] = useState<boolean>(false)
+  const [mobile, setMobile] = useState<boolean>(false);
 
   const toggleDropdown = () => {
-    setDropdown(!dropdown)
-  }
+    setDropdown(!dropdown);
+  };
 
-  const menuToggle = () =>{
-    setMobile(!mobile)
-  }
+  const menuToggle = () => {
+    setMobile(!mobile);
+  };
   return (
-    <header className="md:container fixed 
-    right-0 left-0 bg-primary-foreground max-md:px-6">
-
+    <header
+      className="fixed left-0 
+    right-0 bg-primary-foreground font-inter lg:container max-lg:px-6"
+    >
       {/* Desktop vew */}
       <nav className="flex items-center justify-between py-5 ">
           <Link href="/">
@@ -41,22 +52,13 @@ const Header = () => {
           {isLoggedin ?
           (
             <>
-              <div className="w-[50px] h-[50px] rounded-full  bg-white"></div>
+              <div className="w-[50px] h-[50px] rounded-full bg-white"></div>
               {dropdown && (
-                <div className="absolute top-24 flex flex-col gap-7 rounded-md right-24 px-5 py-8 shadow-lg bg-primary-foreground ">
-                  <Link href="" className="flex gap-4 items-center ">
-                    <span><TabletSmartphone size={30}/></span>
-                    Challenges
-                  </Link>
-                  <Link href="" className="flex gap-4 items-center pt-6">
-                    <span>< Code size={30}/></span>
-                    Solutions
-                  </Link>
-                  <Link href="" className="flex gap-4 items-center pt-6" >
-                    <span><Globe size={30}/></span>
-                    Resources
-                  </Link>
-                </div>  
+                <div className="absolute top-24 flex flex-col gap-4 rounded-md  right-24 px-7 py-5 shadow-lg bg-primary-foreground ">
+                  <Link href={"/dashboard"}>Dashboard</Link>
+                  <Link href={"/profile"}>Profile</Link>
+                  <Link href={"/sgn-out"}>Logout</Link>
+                </div>
               )}
               <button onClick={toggleDropdown}>
               {dropdown ? (
@@ -72,47 +74,33 @@ const Header = () => {
             <button className="bg-accent/90 px-4 py-2 text-accent-foreground rounded-full hover:bg-accent">
             Log in with Github
             </button>
-            )
-          }
-          <ThemeToggle />
+          </div>
         </div>
-        <button onClick={menuToggle} className="md:hidden">
-            {mobile ? (
-                <X size={40}/>
-            ) : (
-              <Menu size={40}/>
-            )}
-          </button>
       </nav>
       {/* Mobile Navigation */}
       {mobile && (
-        <div className="absolute w-full flex flex-col divide-y divide-primary gap-5  bg-primary-foreground left-0 p-6 text-xl md:hidden">
-          <Link href="" className="flex gap-4  items-center">
+        <div className="absolute w-full flex flex-col gap-10 bg-primary-foreground left-0 p-6 text-xl md:hidden">
+          <Link href="" className="flex gap-4 items-center">
             <span><TabletSmartphone size={30}/></span>
             Challenges</Link>
-          <Link href="" className="flex gap-4 pt-6 items-center">
+          <Link href="" className="flex gap-4 items-center">
             <span>< Code size={30}/></span>
             Solutions</Link>
-          <Link href="" className="flex gap-4 items-center pt-6">
+          <Link href="" className="flex gap-4 items-center">
             <span><Globe size={30}/></span>
             Resources</Link>
-            
-          <div className="divide-y divide-primary">
           {isLoggedin ?
           (
             <>
-               <div className="flex gap-4 pb-6 items-center pt-3">
-                 <span className="w-[50px] h-[50px] rounded-full  bg-white"></span>
-                 My Account
-                </div>
-                  <div className="ml-10 flex flex-col gap-6 divide-y divide-primary">
-                    <Link href={"/dashboard"} className="flex gap-4 items-center pt-6">
+              <div className="w-[50px] h-[50px] rounded-full bg-white"></div>
+                  <div className="ml-10 flex flex-col gap-6">
+                    <Link href={"/dashboard"} className="flex gap-4 items-center">
                       <span><Home size={30}/></span>
                       Dashboard</Link>
-                    <Link href={"/profile"} className="flex gap-4 items-center pt-6">
+                    <Link href={"/profile"} className="flex gap-4 items-center">
                       <span><User size={30}/></span>
                       Profile</Link>
-                    <Link href={"/sgn-out"} className="flex gap-4 items-center pt-6">
+                    <Link href={"/sgn-out"} className="flex gap-4 items-center">
                       <span>
                         <LogOut size={30} />
                         </span>
@@ -126,7 +114,6 @@ const Header = () => {
             </button>
             )
           }
-          </div>
         </div>
       )}
     </header>
