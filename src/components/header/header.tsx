@@ -32,10 +32,10 @@ const Header = () => {
   return (
     <header
       className="fixed left-0 
-    right-0 bg-primary-foreground font-inter lg:container max-lg:px-6"
+    right-0 bg-primary-foreground font-inter "
     >
       {/* Desktop vew */}
-      <nav className="flex items-center justify-between py-5 ">
+      <nav className="flex items-center justify-between py-5 container  max-lg:px-6">
         <Link href="/">
           <Image
             src="/images/nexascale-logo.png"
@@ -49,15 +49,15 @@ const Header = () => {
           <div className=" flex items-center justify-center gap-5 text-base font-semibold max-lg:hidden">
             <ul className=" flex items-center justify-center gap-5 uppercase italic  max-lg:hidden">
               <li className="relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:scale-0 after:bg-accent after:transition-transform after:duration-500 hover:after:scale-100">
-                <Link href="" className="hover:after-content">
+                <Link href="/challenges" >
                   Challenges
                 </Link>
               </li>
               <li className="relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:scale-0 after:bg-accent after:transition-transform after:duration-500 hover:after:scale-100">
-                <Link href="">Solutions</Link>
+                <Link href="/solutions">Solutions</Link>
               </li>
               <li className="relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:scale-0 after:bg-accent after:transition-transform after:duration-500 hover:after:scale-100">
-                <Link href="">Resources</Link>
+                <Link href="/resources">Resources</Link>
               </li>
             </ul>
             {isLoggedin ? (
@@ -112,20 +112,22 @@ const Header = () => {
       </nav>
       {/* Mobile Navigation */}
       {mobile && (
-        <div className="absolute left-0 flex w-full flex-col gap-10 bg-primary-foreground p-6 text-xl lg:hidden">
-          <Link href="" className="flex items-center gap-4">
+        <div className="absolute left-0 flex w-full flex-col uppercase italic 
+         gap-10 bg-primary-foreground divide-y divide-accent p-6 text-xl lg:hidden
+         ">
+          <Link href="/challenges" className="flex items-center gap-4">
             <span>
               <TabletSmartphone size={30} />
             </span>
             Challenges
           </Link>
-          <Link href="" className="flex items-center gap-4">
+          <Link href="/solutions" className="flex items-center gap-4 pt-4">
             <span>
               <Code size={30} />
             </span>
             Solutions
           </Link>
-          <Link href="" className="flex items-center gap-4">
+          <Link href="/resources" className="flex items-center gap-4 pt-4">
             <span>
               <Globe size={30} />
             </span>
@@ -133,21 +135,23 @@ const Header = () => {
           </Link>
           {isLoggedin ? (
             <>
-              <div className="h-[50px] w-[50px] rounded-full bg-foreground"></div>
-              <div className="ml-10 flex flex-col gap-6">
-                <Link href={"/dashboard"} className="flex items-center gap-4">
+              <div className="pt-4">
+                  <Image src="https://plus.unsplash.com/premium_photo-1675626492183-865d6d8e2e8a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHVzZXJ8ZW58MHx8MHx8fDA%3D" width={48} height={48} alt="avatar" className="object-cover rounded-full w-12 h-12" />
+                </div>
+              <div className="ml-10 flex flex-col gap-6 divide-y divide-accent">
+                <Link href={"/dashboard"} className="flex items-center gap-4 pt-4">
                   <span>
                     <Home size={30} />
                   </span>
                   Dashboard
                 </Link>
-                <Link href={"/profile"} className="flex items-center gap-4">
+                <Link href={"/profile"} className="flex items-center gap-4 pt-4">
                   <span>
                     <User size={30} />
                   </span>
                   Profile
                 </Link>
-                <Link href={"/sgn-out"} className="flex items-center gap-4">
+                <Link href="" className="flex items-center gap-4 pt-4">
                   <span>
                     <LogOut className="text-red-500" size={30} />
                   </span>
