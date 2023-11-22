@@ -18,7 +18,7 @@ import {
 import { Button } from "../ui/button";
 
 const Header = () => {
-  const isLoggedin = false
+  const isLoggedin = true
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [mobile, setMobile] = useState<boolean>(false);
 
@@ -113,7 +113,7 @@ const Header = () => {
       {/* Mobile Navigation */}
       {mobile && (
         <div className="absolute left-0 flex w-full h-screen flex-col uppercase italic 
-         gap-10 bg-primary-foreground divide-y divide-accent p-6 text-xl lg:hidden
+         gap-10 bg-primary-foreground divide-y-2  p-6 text-xl lg:hidden
          ">
           <Link href="/challenges" className="flex items-center gap-4">
             <span>
@@ -138,7 +138,7 @@ const Header = () => {
               <div className="pt-4">
                   <Image src="https://plus.unsplash.com/premium_photo-1675626492183-865d6d8e2e8a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHVzZXJ8ZW58MHx8MHx8fDA%3D" width={48} height={48} alt="avatar" className="object-cover rounded-full w-12 h-12" />
                 </div>
-              <div className="ml-10 flex flex-col gap-6 divide-y divide-accent">
+              <div className="ml-10 flex flex-col gap-6 divide-y-2">
                 <Link href={"/dashboard"} className="flex items-center gap-4 pt-4">
                   <span>
                     <Home size={30} />
