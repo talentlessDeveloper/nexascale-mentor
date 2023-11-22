@@ -18,7 +18,7 @@ import {
 import { Button } from "../ui/button";
 
 const Header = () => {
-  const isLoggedin = true;
+  const isLoggedin = false
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [mobile, setMobile] = useState<boolean>(false);
 
@@ -92,7 +92,7 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <Button className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent">
+              <Button className="flex gap-2  rounded-full bg-accent/90 px-6 py-4 text-accent-foreground hover:bg-accent">
                 <span className="font-semibold uppercase italic">
                   Log in with Github
                 </span>{" "}
@@ -112,7 +112,7 @@ const Header = () => {
       </nav>
       {/* Mobile Navigation */}
       {mobile && (
-        <div className="absolute left-0 flex w-full flex-col uppercase italic 
+        <div className="absolute left-0 flex w-full h-screen flex-col uppercase italic 
          gap-10 bg-primary-foreground divide-y divide-accent p-6 text-xl lg:hidden
          ">
           <Link href="/challenges" className="flex items-center gap-4">
@@ -160,7 +160,7 @@ const Header = () => {
               </div>
             </>
           ) : (
-            <Button className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent">
+            <Button className="flex gap-2  rounded-full bg-accent/90 p-8  text-accent-foreground hover:bg-accent">
               <span className="font-semibold uppercase italic">
                 Log in with Github
               </span>{" "}
