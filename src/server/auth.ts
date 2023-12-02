@@ -6,7 +6,7 @@ import {
   type NextAuthOptions,
   DefaultUser,
 } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import GithubProvider, { GithubProfile } from "next-auth/providers/github";
 
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
@@ -52,6 +52,20 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   providers: [
     GithubProvider({
+      profile(profile: GithubProfile, tokens) {
+        let role = "user";
+        if (profile?.email === "kareemope52@gmail.com") {
+          role = "admin";
+        }
+        const profileToReturn = {
+          ...profile,
+          role,
+          image: profile.avatar_url,
+          id: profile.id.toString(),
+        };
+        console.log(profileToReturn);
+        return profileToReturn;
+      },
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
