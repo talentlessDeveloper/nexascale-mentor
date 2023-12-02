@@ -56,7 +56,7 @@ model User {
   sessions      Session[]
   points        Int        @default(0)
   tasks         UserTask[]
-  Like          Like[]
+  likes         Like[]
 }
 
 model VerificationToken {
@@ -69,20 +69,24 @@ model VerificationToken {
 
 model Task {
   id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   title       String
-  description String
+  description String     @db.Text
   image       String // You can store the image URL or file path
   assets      String // You can store Figma links or other assets
-  brief       String
+  brief       String     @db.Text
   userTasks   UserTask[]
 }
 
 model UserTask {
-  id        String  @unique @default(cuid())
+  id        String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    String
   taskId    String
-  started   Boolean @default(false)
-  submitted Boolean @default(false)
+  started   Boolean  @default(false)
+  submitted Boolean  @default(false)
   likes     Like[]
 
   user User @relation(fields: [userId], references: [id])
