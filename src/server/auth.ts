@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
           name: profile.name,
           email: profile.email,
         };
-        console.log(profileToReturn);
+
         return profileToReturn;
       },
       clientId: env.GITHUB_CLIENT_ID,
