@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
 
 type HeaderMenuProps = {
   isLoggedIn: boolean;
@@ -73,7 +74,10 @@ const HeaderMenu = ({ isLoggedIn }: HeaderMenuProps) => {
           </div>
         </>
       ) : (
-        <Button className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent">
+        <Button
+          className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent"
+          onClick={() => signIn("github")}
+        >
           <span className="font-semibold uppercase italic">
             Log in with Github
           </span>{" "}

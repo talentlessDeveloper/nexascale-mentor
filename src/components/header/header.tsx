@@ -5,21 +5,25 @@ import {
   Home,
   LogOut,
   Menu,
+  Pen,
   User,
   X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ThemeToggle from "../themes/toggle-theme";
 import { Button } from "../ui/button";
 import HeaderMenu from "./header-menu";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Header = () => {
-  const isLoggedin = true;
+  const { status, data: sessionData } = useSession();
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [mobile, setMobile] = useState<boolean>(false);
 
+  const router = useRouter();
   const toggleDropdown = () => {
     setDropdown(!dropdown);
   };
@@ -27,10 +31,13 @@ const Header = () => {
   const menuToggle = () => {
     setMobile(!mobile);
   };
+
+  const isLoggedin = status === "authenticated";
+  console.log(sessionData);
   return (
     <header
       className="fixed left-0 
-    right-0 bg-primary-foreground font-inter "
+    right-0 z-[5] bg-primary-foreground font-inter"
     >
       {/* Desktop vew */}
       <nav className="container flex items-center justify-between py-5  max-lg:px-6">
@@ -60,7 +67,7 @@ const Header = () => {
               <>
                 <div>
                   <Image
-                    src="https://plus.unsplash.com/premium_photo-1675626492183-865d6d8e2e8a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
+                    src={sessionData?.user.image!}
                     width={48}
                     height={48}
                     alt="avatar"
@@ -69,6 +76,19 @@ const Header = () => {
                 </div>
                 {dropdown && (
                   <ul className="absolute right-24 top-24 flex  flex-col  divide-y-2  rounded-lg bg-primary-foreground text-xs uppercase italic shadow-lg">
+                    {sessionData?.user.role?.toLowerCase() === "admin" && (
+                      <li>
+                        <Link
+                          href="/create-task"
+                          className="flex w-full items-center gap-1 p-3"
+                        >
+                          <span>
+                            <Pen />
+                          </span>
+                          <span>Create Task</span>
+                        </Link>
+                      </li>
+                    )}
                     <li className="flex items-center gap-1 px-3 py-3">
                       <span>
                         <Home size={30} />
@@ -81,11 +101,23 @@ const Header = () => {
                       </span>
                       <Link href="/profile">Profile</Link>
                     </li>
-                    <li className="flex items-center gap-1 px-3 py-3">
-                      <span>
-                        <LogOut className="text-red-500" size={30} />
-                      </span>
-                      <Link href="/sign-out">Logout</Link>
+                    <li className="px-3 py-3">
+                      <Button
+                        className="flex items-center gap-1 bg-transparent px-0 hover:bg-transparent"
+                        onClick={() => {
+                          signOut({
+                            callbackUrl: "/",
+                          });
+                        }}
+                      >
+                        <LogOut
+                          className="text-red-500 hover:text-red-500/60"
+                          size={30}
+                        />
+                        <span className="text-xs font-bold uppercase italic text-primary hover:text-primary/60">
+                          Logout
+                        </span>
+                      </Button>
                     </li>
                   </ul>
                 )}
@@ -94,7 +126,14 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <Button className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent">
+              <Button
+                className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent"
+                onClick={() => {
+                  signIn("github", {
+                    callbackUrl: "/profile",
+                  });
+                }}
+              >
                 <span className="font-semibold uppercase italic">
                   Log in with Github
                 </span>{" "}
