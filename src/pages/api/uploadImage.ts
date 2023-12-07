@@ -1,5 +1,5 @@
 import { v2 } from "cloudinary";
-import { NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "~/env.mjs";
 
 v2.config({
@@ -18,8 +18,8 @@ export default async function handler(
     });
   }
 
-  let imageUrl;
-  const { imageFile } = req.body;
+  let imageUrl: string | null;
+  const { imageFile } = req.body as { imageFile: string };
 
   if (imageFile) {
     // console.log("entered the if block");

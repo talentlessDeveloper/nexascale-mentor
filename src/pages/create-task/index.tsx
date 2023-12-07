@@ -1,17 +1,17 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { useSession } from "next-auth/react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { GetServerSideProps } from "next";
-import { getServerAuthSession } from "~/server/auth";
 import { Paperclip } from "lucide-react";
+import { type GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import z from "zod";
+import { getServerAuthSession } from "~/server/auth";
 
-import * as commands from "@uiw/react-md-editor/lib/commands";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
@@ -22,10 +22,9 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { Button } from "~/components/ui/button";
 
-import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
+import "@uiw/react-md-editor/markdown-editor.css";
 import { api } from "~/utils/api";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -42,7 +41,6 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/avif",
   "image/webp",
 ];
-const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
 
 const formSchema = z.object({
   title: z.string().max(255, {
@@ -54,17 +52,29 @@ const formSchema = z.object({
   assets: z.string(),
   brief: z.string(),
   imageFile: z
-    .any()
-    .refine((file) => {
-      return file.size <= MAX_FILE_SIZE;
+    .unknown()
+    .refine((file: unknown) => {
+      if (file instanceof File) {
+        return file.size <= MAX_FILE_SIZE;
+      }
+      return false;
     }, `Max image size is 1MB.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_MIME_TYPES.includes(file.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported.",
-    ),
+    .refine((file: unknown) => {
+      if (file instanceof File) {
+        return ACCEPTED_IMAGE_MIME_TYPES.includes(file.type);
+      }
+      return false;
+    }, "Only .jpg, .jpeg, .png and .webp formats are supported."),
 });
 
 type FormData = z.infer<typeof formSchema>;
+type ResponseData = {
+  status: "success" | "error";
+  message: string;
+  imageUrl: string | null;
+};
+
+// type DataWithoutImageFile = Omit<FormData, "imageFile">;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -104,11 +114,11 @@ const CreateTask = () => {
   const { isLoading: isPosting, mutate } = api.task.create.useMutation({
     onSuccess: () => {
       form.reset();
-      ctx.task.getAll.invalidate();
+      void ctx.task.getAll.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      if (errorMessage && errorMessage[0]) {
+      if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
       } else {
         toast.error("Failed to post! Please try again later.");
@@ -118,10 +128,9 @@ const CreateTask = () => {
 
   useEffect(() => {
     if (sessionData?.user.role !== "admin") {
-      console.log("not Authorized", sessionData?.user.role);
-      router.replace("/");
+      void router.replace("/");
     }
-  }, []);
+  }, [router, sessionData?.user.role]);
 
   if (sessionData?.user.role !== "admin") {
     return <h2 className="my-36 text-center">Not Authorized</h2>;
@@ -164,11 +173,11 @@ const CreateTask = () => {
         },
         body: JSON.stringify(body),
       });
-      const data = await res.json();
+      const data = (await res.json()) as ResponseData;
       if (res.ok) {
         setSelectedImage({
           ...selectedImage,
-          url: data.imageUrl,
+          url: data.imageUrl!,
           loading: false,
         });
         toast.success(data.message);
@@ -194,6 +203,7 @@ const CreateTask = () => {
     if (!selectedImage.url || isPosting) {
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { imageFile, ...restData } = data;
     const taskData = {
       ...restData,
@@ -281,7 +291,7 @@ const CreateTask = () => {
                             size="lg"
                             onClick={() => {
                               if (selectedImage.file) {
-                                uploadImage({
+                                void uploadImage({
                                   imageFile: selectedImage.file,
                                 });
                               }

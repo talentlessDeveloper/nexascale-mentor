@@ -9,21 +9,19 @@ import {
   User,
   X,
 } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ThemeToggle from "../themes/toggle-theme";
 import { Button } from "../ui/button";
 import HeaderMenu from "./header-menu";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 const Header = () => {
   const { status, data: sessionData } = useSession();
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [mobile, setMobile] = useState<boolean>(false);
 
-  const router = useRouter();
   const toggleDropdown = () => {
     setDropdown(!dropdown);
   };
@@ -67,16 +65,20 @@ const Header = () => {
               <>
                 <div>
                   <Image
-                    src={sessionData?.user.image!}
+                    src={
+                      sessionData?.user.image
+                        ? sessionData.user.image
+                        : "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
+                    }
                     width={48}
                     height={48}
                     alt="avatar"
                     className="h-12 w-12 rounded-full object-cover"
                   />
                 </div>
-                {dropdown && (
+                {dropdown ? (
                   <ul className="absolute right-24 top-24 flex  flex-col  divide-y-2  rounded-lg bg-primary-foreground text-xs uppercase italic shadow-lg">
-                    {sessionData?.user.role?.toLowerCase() === "admin" && (
+                    {sessionData?.user.role?.toLowerCase() === "admin" ? (
                       <li>
                         <Link
                           href="/create-task"
@@ -88,7 +90,7 @@ const Header = () => {
                           <span>Create Task</span>
                         </Link>
                       </li>
-                    )}
+                    ) : null}
                     <li className="flex items-center gap-1 px-3 py-3">
                       <span>
                         <Home size={30} />
@@ -105,7 +107,7 @@ const Header = () => {
                       <Button
                         className="flex items-center gap-1 bg-transparent px-0 hover:bg-transparent"
                         onClick={() => {
-                          signOut({
+                          void signOut({
                             callbackUrl: "/",
                           });
                         }}
@@ -120,7 +122,7 @@ const Header = () => {
                       </Button>
                     </li>
                   </ul>
-                )}
+                ) : null}
                 <button onClick={toggleDropdown}>
                   {dropdown ? <ChevronUp /> : <ChevronDown />}
                 </button>
@@ -129,7 +131,7 @@ const Header = () => {
               <Button
                 className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent"
                 onClick={() => {
-                  signIn("github", {
+                  void signIn("github", {
                     callbackUrl: "/profile",
                   });
                 }}

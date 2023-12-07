@@ -1,5 +1,3 @@
-import Image from "next/image";
-import React from "react";
 import TaskCard from "~/components/tasks/task-card";
 import TaskSkeleton from "~/components/tasks/task-skeleton";
 import { tasks } from "~/lib/tasks";

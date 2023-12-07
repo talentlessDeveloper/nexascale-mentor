@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { CldImage } from "next-cloudinary";
 import React from "react";
-import { RouterOutputs } from "~/utils/api";
+import { type RouterOutputs } from "~/utils/api";
 
 type TaskProps = {
   task: RouterOutputs["task"]["getAll"][number];
