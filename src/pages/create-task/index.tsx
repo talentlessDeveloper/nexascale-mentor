@@ -1,12 +1,15 @@
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-
-import { Button } from "~/components/ui/button";
-
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { GetServerSideProps } from "next";
+import { getServerAuthSession } from "~/server/auth";
+import { Paperclip } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 import * as commands from "@uiw/react-md-editor/lib/commands";
 import {
@@ -17,19 +20,29 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { SubmitHandler, useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { GetServerSideProps } from "next";
-import { getServerAuthSession } from "~/server/auth";
+import { Button } from "~/components/ui/button";
+
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import { api } from "~/utils/api";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 // const MDPreview = dynamic(
 //   () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
 //   { ssr: false },
 // );
+
+const MAX_FILE_SIZE = 1024 * 1024 * 1;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/avif",
+  "image/webp",
+];
+const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
 
 const formSchema = z.object({
   title: z.string().max(255, {
@@ -38,9 +51,17 @@ const formSchema = z.object({
   description: z.string().min(15, {
     message: "Description must be at least 15 characters",
   }),
-  image: z.string(),
   assets: z.string(),
   brief: z.string(),
+  imageFile: z
+    .any()
+    .refine((file) => {
+      return file.size <= MAX_FILE_SIZE;
+    }, `Max image size is 1MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_MIME_TYPES.includes(file.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported.",
+    ),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -57,18 +78,44 @@ const CreateTask = () => {
   const router = useRouter();
   //   const [brief, setBrief] = useState<string | undefined>("Default Text na awa");
   //   const [preview, setPreview] = useState<"write" | "preview">("write");
+  const [selectedImage, setSelectedImage] = useState<{
+    file: string | null;
+    url: string;
+    error: string;
+    loading: boolean;
+  }>({
+    file: null,
+    url: "",
+    error: "",
+    loading: false,
+  });
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      image: "",
+      imageFile: undefined,
       assets: "",
       description: "",
       brief: "",
     },
   });
+  const ctx = api.useUtils();
 
-  console.log("==> ===>", sessionData?.user.role);
+  const { isLoading: isPosting, mutate } = api.task.create.useMutation({
+    onSuccess: () => {
+      form.reset();
+      ctx.task.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post! Please try again later.");
+      }
+    },
+  });
+
   useEffect(() => {
     if (sessionData?.user.role !== "admin") {
       console.log("not Authorized", sessionData?.user.role);
@@ -80,8 +127,81 @@ const CreateTask = () => {
     return <h2 className="my-36 text-center">Not Authorized</h2>;
   }
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (loadEvent) => {
+      if (loadEvent.target?.result) {
+        setSelectedImage({
+          ...selectedImage,
+          file: loadEvent.target.result as string,
+        });
+      }
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const uploadImage = async (body: { imageFile: string }) => {
+    if (selectedImage.loading) {
+      return;
+    }
+    setSelectedImage({
+      ...selectedImage,
+      loading: true,
+    });
+    try {
+      const res = await fetch("/api/uploadImage", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSelectedImage({
+          ...selectedImage,
+          url: data.imageUrl,
+          loading: false,
+        });
+        toast.success(data.message);
+      } else {
+        setSelectedImage({
+          ...selectedImage,
+          error: data.message,
+          loading: false,
+        });
+        toast.error(data.message);
+      }
+    } catch (error) {
+      setSelectedImage({
+        ...selectedImage,
+        error: "Server Error, Try again Later",
+        loading: false,
+      });
+      toast.error("Server Error, Try again Later");
+    }
+  };
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data, "==>");
+    if (!selectedImage.url || isPosting) {
+      return;
+    }
+    const { imageFile, ...restData } = data;
+    const taskData = {
+      ...restData,
+      image: selectedImage.url,
+    };
+
+    console.log(taskData, "==>");
+    mutate(taskData);
   };
 
   return (
@@ -115,19 +235,69 @@ const CreateTask = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                name="image"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Task Image</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Task Image" {...field} type="file" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <div className="flex flex-col gap-2">
+                {selectedImage.file && (
+                  <Image
+                    src={selectedImage.file}
+                    width={100}
+                    height={100}
+                    alt="file"
+                  />
                 )}
-              />
+                <FormField
+                  name="imageFile"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        {/* <Input placeholder="Task Image" {...field} type="file" /> */}
+                        <div className="flex items-center gap-2">
+                          <Button size="lg" type="button">
+                            <input
+                              type="file"
+                              className="hidden"
+                              id="fileInput"
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              onChange={(e) => {
+                                field.onChange(e.target.files?.[0]);
+                                console.log(e.target.files?.[0]?.size);
+                                handleImageChange(e);
+                              }}
+                              ref={field.ref}
+                            />
+                            <label
+                              htmlFor="fileInput"
+                              className="text-neutral-90 inline-flex cursor-pointer items-center gap-3 rounded-md"
+                            >
+                              <Paperclip />
+                              <span className="whitespace-nowrap">
+                                choose your image
+                              </span>
+                            </label>
+                          </Button>
+                          <Button
+                            type="button"
+                            size="lg"
+                            onClick={() => {
+                              if (selectedImage.file) {
+                                uploadImage({
+                                  imageFile: selectedImage.file,
+                                });
+                              }
+                            }}
+                          >
+                            {selectedImage.loading
+                              ? "Uploading..."
+                              : "Upload Image"}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 name="description"
                 control={form.control}
@@ -170,7 +340,9 @@ const CreateTask = () => {
                 )}
               />
 
-              <Button type="submit">Create Task</Button>
+              <Button type="submit">
+                {isPosting ? "Creating task..." : "Create task"}
+              </Button>
             </form>
           </Form>
         </div>
