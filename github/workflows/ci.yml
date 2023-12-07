@@ -8,6 +8,9 @@ env:
   NEXTAUTH_URL: "https://localhost:3000"
   GITHUB_CLIENT_ID: "fakegithubclientid"
   GITHUB_CLIENT_SECRET: "fakegithubclientsecret"
+  CLOUDINARY_CLOUD_NAME: "name"
+  CLOUDINARY_CLOUD_API_KEY: "key"
+  CLOUDINARY_CLOUD_API_SECRET: "secret"
 
 jobs:
   build:
