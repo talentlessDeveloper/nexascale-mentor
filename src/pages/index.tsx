@@ -4,7 +4,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
+  const hello = api.task.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
@@ -13,7 +13,7 @@ export default function Home() {
         <meta name="description" content="NexaSale Frontend Mentor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="font-inter flex min-h-screen flex-col items-center justify-center ">
+      <div className="flex min-h-screen flex-col items-center justify-center font-inter ">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 text-center ">
           <h1 className="max-w-3xl text-center text-5xl font-extrabold tracking-tight  sm:text-[5rem]">
             Welcome to <span className="text-accent">Nexascale</span>{" "}
@@ -35,7 +35,7 @@ export default function Home() {
 function AuthShowcase() {
   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = api.post.getSecretMessage.useQuery(
+  const { data: secretMessage } = api.task.getSecretMessage.useQuery(
     undefined, // no input
     { enabled: sessionData?.user !== undefined },
   );
