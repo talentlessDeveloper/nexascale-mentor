@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -35,12 +36,38 @@ export const taskRouter = createTRPCRouter({
   //     where: { createdBy: { id: ctx.session.user.id } },
   //   });
   // }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().max(255, {
+          message: "Title cannot be empty characters",
+        }),
+        description: z.string().min(15, {
+          message: "Description must be at least 15 characters",
+        }),
+        assets: z.string(),
+        brief: z.string(),
+        image: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const taskData = {
+        ...input,
+      };
+
+      if (ctx.session.user.role !== "admin")
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      return ctx.db.task.create({
+        data: taskData,
+      });
+    }),
 
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
 
-  getTasks: publicProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return ctx.db.task.findMany({
       orderBy: { createdAt: "desc" },
