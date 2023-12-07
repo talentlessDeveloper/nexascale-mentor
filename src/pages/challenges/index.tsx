@@ -6,7 +6,7 @@ import { tasks } from "~/lib/tasks";
 import { api } from "~/utils/api";
 
 const Challenges = () => {
-  const { isLoading, data } = api.task.getTasks.useQuery();
+  const { isLoading, data } = api.task.getAll.useQuery();
   let content;
   if (!data) {
     content = <p>Something went wrong</p>;
