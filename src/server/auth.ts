@@ -22,6 +22,7 @@ declare module "next-auth" {
     user: DefaultSession["user"] & {
       id: string;
       role: string | null;
+      username: string;
       // ...other properties
       // role: UserRole;
     };
@@ -30,6 +31,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     // ...other properties
     role: string | null;
+    username: string;
   }
 }
 
@@ -46,6 +48,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         role: user.role,
+        username: user.username,
       },
     }),
   },
@@ -58,10 +61,12 @@ export const authOptions: NextAuthOptions = {
           role = "admin";
         }
         const profileToReturn = {
-          ...profile,
           role,
           image: profile.avatar_url,
           id: profile.id.toString(),
+          username: profile.login,
+          name: profile.name,
+          email: profile.email,
         };
         console.log(profileToReturn);
         return profileToReturn;
