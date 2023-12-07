@@ -1,4 +1,4 @@
-import { createRequire } from "module";
+// import removeImports from "next-remove-imports";
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
@@ -6,9 +6,7 @@ import { createRequire } from "module";
  */
 await import("./src/env.mjs");
 
-const require = createRequire(import.meta.url);
-
-const removeImports = require("next-remove-imports")();
+// const removeImports = require("next-remove-imports")();
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -23,6 +21,7 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  transpilePackages: ["react-md-editor"],
   images: {
     remotePatterns: [
       {
@@ -49,4 +48,4 @@ const config = {
   },
 };
 
-export default removeImports(config);
+export default config;
