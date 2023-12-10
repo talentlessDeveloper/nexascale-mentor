@@ -73,4 +73,20 @@ export const taskRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
   }),
+
+  getById: publicProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findUnique({
+        where: {
+          id: input.taskId,
+        },
+      });
+      if (!task) throw new TRPCError({ code: "NOT_FOUND" });
+      return task;
+    }),
 });
