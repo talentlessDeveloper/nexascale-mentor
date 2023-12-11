@@ -93,6 +93,15 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
                 {userTaskData && userTaskData.started ? (
                   <div className="flex flex-col gap-3">
                     <p>Seems Like you have started this challenge</p>
+                    <p>
+                      visit{" "}
+                      <Link
+                        href={`/challenges/${task.id}/hub`}
+                        className="text-accent"
+                      >
+                        here
+                      </Link>
+                    </p>
                     <Link
                       href={`/challenges/${task.id}/hub`}
                       className="flex h-auto max-w-[280px] items-center justify-center rounded-xl bg-accent py-3 text-xl hover:bg-accent/75 "
