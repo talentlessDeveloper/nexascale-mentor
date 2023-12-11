@@ -1,13 +1,15 @@
 import { CldImage } from "next-cloudinary";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import PageTitle from "~/components/shared/page-title";
 import { api } from "~/utils/api";
 
 const Hub = () => {
-  const params = useParams();
+  const router = useRouter();
+  const slug = router.query.slug;
+  console.log(slug);
   const { data, isLoading } = api.task.getById.useQuery({
-    taskId: params.slug as string,
+    taskId: slug as string,
   });
 
   if (isLoading) {
@@ -35,7 +37,7 @@ const Hub = () => {
             src={data.image}
             alt={data.title}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="100vw"
             className="h-full w-full rounded-none rounded-tl-lg rounded-tr-lg object-cover transition-transform duration-300 hover:scale-105"
           />
         ) : (
@@ -44,7 +46,7 @@ const Hub = () => {
               fill
               src={data.image}
               alt={data.title}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="100vw"
               className="h-full w-full rounded-none rounded-tl-lg rounded-tr-lg object-cover transition-transform duration-300 hover:scale-105"
             />
           )
