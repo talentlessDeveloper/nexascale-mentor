@@ -115,6 +115,7 @@ const CreateTask = () => {
     onSuccess: () => {
       form.reset();
       void ctx.task.getAll.invalidate();
+      toast.success("Task created successfully");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
