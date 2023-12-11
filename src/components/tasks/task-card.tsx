@@ -1,17 +1,16 @@
-import Image from "next/image";
+import { type Task } from "@prisma/client";
 import { CldImage } from "next-cloudinary";
-import React from "react";
-import { type RouterOutputs } from "~/utils/api";
+import Image from "next/image";
 import Link from "next/link";
 
 type TaskProps = {
-  task: RouterOutputs["task"]["getAll"][number];
+  task: Task;
 };
 
 const TaskCard = ({ task }: TaskProps) => {
   return (
     <div className="overflow-hidden rounded-tl-lg rounded-tr-lg shadow-lg shadow-black/10 dark:shadow-white/10">
-      <div className="relative h-60 lg:h-72 ">
+      <div className="relative h-80 lg:h-96 ">
         <Link href={`/challenges/${task.id}`}>
           {task.image.includes("cloudinary") ? (
             <CldImage

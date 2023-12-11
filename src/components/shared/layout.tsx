@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
-import Header from "./header/header";
-import { ThemeProvider } from "./themes/theme-provider";
+import Header from "../header/header";
+import { ThemeProvider } from "../themes/theme-provider";
 import { Inter } from "next/font/google";
 import { cn } from "~/lib/utils";
 
