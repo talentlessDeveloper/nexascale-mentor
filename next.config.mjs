@@ -1,8 +1,12 @@
+// import removeImports from "next-remove-imports";
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 await import("./src/env.mjs");
+
+// const removeImports = require("next-remove-imports")();
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -17,6 +21,7 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  transpilePackages: ["react-md-editor"],
   images: {
     remotePatterns: [
       {
@@ -29,14 +34,17 @@ const config = {
       },
       {
         protocol: "https",
-        hostname:  "media.istockphoto.com",
+        hostname: "media.istockphoto.com",
       },
       {
         protocol: "https",
-        hostname:  "lh3.googleusercontent.com",
+        hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
-   
   },
 };
 
