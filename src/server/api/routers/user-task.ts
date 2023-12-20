@@ -8,7 +8,6 @@ export const userTaskRouter = createTRPCRouter({
       z.object({
         taskId: z.string(),
         userId: z.string(),
-        started: z.boolean(),
       }),
     )
     .mutation(({ ctx, input }) => {

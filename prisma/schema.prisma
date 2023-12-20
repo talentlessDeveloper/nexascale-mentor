@@ -90,7 +90,7 @@ model Task {
   started     Boolean     @default(false)
   submitted   Boolean     @default(false)
   taskStarts  TaskStart[]
-  userId      String
+  userId      String?
   solutions   Solution[]
 
   @@index([userId])
@@ -98,7 +98,7 @@ model Task {
 
 // TaskStart Model
 model TaskStart {
-  id        String   @unique @default(cuid())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
