@@ -19,7 +19,7 @@ export const userTaskRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return ctx.db.userTask.create({
+      return ctx.db.taskStart.create({
         data: userTask,
       });
     }),
@@ -31,7 +31,7 @@ export const userTaskRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      return ctx.db.userTask.findFirst({
+      return ctx.db.taskStart.findFirst({
         where: {
           userId: input.userId,
           taskId: input.taskId,
