@@ -89,7 +89,7 @@ const CreateTask = () => {
   //   const [brief, setBrief] = useState<string | undefined>("Default Text na awa");
   //   const [preview, setPreview] = useState<"write" | "preview">("write");
   const [selectedImage, setSelectedImage] = useState<{
-    file: string | null;
+     file: string | null;
     url: string;
     error: string;
     loading: boolean;
@@ -114,7 +114,7 @@ const CreateTask = () => {
   const { isLoading: isPosting, mutate } = api.task.create.useMutation({
     onSuccess: () => {
       form.reset();
-      void ctx.task.getAll.invalidate();
+      void    ctx.task.getAll.invalidate();
       toast.success("Task created successfully");
     },
     onError: (e) => {
@@ -179,7 +179,7 @@ const CreateTask = () => {
         setSelectedImage({
           ...selectedImage,
           url: data.imageUrl!,
-          loading: false,
+          loading: false, 
         });
         toast.success(data.message);
       } else {
