@@ -1,6 +1,7 @@
 import { v2 } from "cloudinary";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "~/env.mjs";
+import { type FolderName } from "~/lib/types";
 
 v2.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
@@ -19,13 +20,16 @@ export default async function handler(
   }
 
   let imageUrl: string | null;
-  const { imageFile } = req.body as { imageFile: string };
+  const { imageFile, folderName } = req.body as {
+    imageFile: string;
+    folderName: FolderName;
+  };
 
   if (imageFile) {
     // console.log("entered the if block");
     try {
       const uploadedImage = await v2.uploader.upload(imageFile, {
-        folder: "nexascale-frontend-mentor-tasks", // Set the folder in your Cloudinary where images will be stored
+        folder: folderName, // Set the folder in your Cloudinary where images will be stored
         resource_type: "image", // Specify the type of resource
       });
 
