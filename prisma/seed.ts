@@ -20,11 +20,13 @@ async function main() {
   console.log("Database connected successfully 🙌");
 }
 
-main()
+try{
+  main()
   .catch((e) => {
     console.error(e);
     process.exit(1);
   })
-  .finally( () => {
-    await prisma.$disconnect();
-  });
+}
+finally{
+  await prisma.$disconnect();
+}
