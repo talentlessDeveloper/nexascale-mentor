@@ -47,18 +47,19 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?    @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   role          String?
   username      String?
   accounts      Account[]
   sessions      Session[]
-  points        Int        @default(0)
-  tasks         UserTask[]
-  likes         Like[]
+  points        Int         @default(0)
+  likes         Likes[]
+  startedTasks  TaskStart[]
+  solutions     Solution[]
 }
 
 model VerificationToken {
@@ -69,44 +70,73 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Task {
-  id          String     @id @default(cuid())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  title       String
-  description String     @db.Text
-  image       String
-  assets      String
-  brief       String     @db.Text
-  userTasks   UserTask[]
+// Tag Model
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  solutions Solution[]
 }
 
-model UserTask {
-  id        String   @unique @default(cuid())
+// Task Model
+model Task {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  title       String
+  description String      @db.Text
+  image       String
+  assets      String
+  brief       String      @db.Text
+  started     Boolean     @default(false)
+  submitted   Boolean     @default(false)
+  taskStarts  TaskStart[]
+  userId      String?
+  solutions   Solution[]
+
+  @@index([userId])
+}
+
+// TaskStart Model
+model TaskStart {
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
   taskId    String
-  started   Boolean  @default(false)
-  submitted Boolean  @default(false)
-  likes     Like[]
+  user      User     @relation(fields: [userId], references: [id])
+  task      Task     @relation(fields: [taskId], references: [id])
 
-  user User @relation(fields: [userId], references: [id])
-  task Task @relation(fields: [taskId], references: [id])
+  @@index([userId])
+  @@index([taskId])
+}
 
-  @@id([userId, taskId])
+model Solution {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  githubLink   String
+  liveSiteLink String
+  description  String   @db.Text
+  tags         Tag[]
+  screenshot   String // You may choose an appropriate type for storing image data
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [id])
+  likes        Likes[]
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+
   @@index([taskId])
   @@index([userId])
 }
 
-model Like {
+model Likes {
   id         String @id @default(cuid())
   userId     String
-  userTaskId String
+  solutionId String
 
   user     User     @relation(fields: [userId], references: [id])
-  userTask UserTask @relation(fields: [userTaskId], references: [id])
+  solution Solution @relation(fields: [solutionId], references: [id])
 
   @@index([userId])
-  @@index([userTaskId])
+  @@index([solutionId])
 }

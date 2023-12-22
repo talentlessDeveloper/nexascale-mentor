@@ -36,6 +36,8 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
     },
   );
 
+  const ctx = api.useUtils();
+
   const { isLoading: isStartingUserTask, mutate } =
     api.userTask.create.useMutation({
       onSuccess: () => {
@@ -43,6 +45,7 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
         toast.success("Challenge Successfully Started");
         void router.push(`/challenges/${task.id}/hub`);
         // TODO: ensure you invalidate all userTasks
+        void ctx.userTask.invalidate();
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -63,7 +66,6 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
     const userTask = {
       userId: sessionData.user.id,
       taskId: task.id,
-      started: true,
     };
 
     mutate(userTask);
@@ -90,18 +92,10 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
                 </div>
                 <h1 className="text-3xl font-bold">{task.title}</h1>
                 <p>{task.description}</p>
-                {userTaskData && userTaskData.started ? (
+                {userTaskData ? (
                   <div className="flex flex-col gap-3">
                     <p>Seems Like you have started this challenge</p>
-                    <p>
-                      visit{" "}
-                      <Link
-                        href={`/challenges/${task.id}/hub`}
-                        className="text-accent"
-                      >
-                        here
-                      </Link>
-                    </p>
+
                     <Link
                       href={`/challenges/${task.id}/hub`}
                       className="flex h-auto max-w-[280px] items-center justify-center rounded-xl bg-accent py-3 text-xl hover:bg-accent/75 "
