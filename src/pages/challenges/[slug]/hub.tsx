@@ -8,7 +8,7 @@ import { api } from "~/utils/api";
 const Hub = () => {
   const router = useRouter();
   const slug = router.query.slug;
-  console.log(slug);
+
   const { data: task, isLoading } = api.task.getById.useQuery({
     taskId: slug as string,
   });

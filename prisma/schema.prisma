@@ -70,13 +70,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Tag Model
-model Tag {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  solutions Solution[]
-}
-
 // Task Model
 model Task {
   id          String      @id @default(cuid())
@@ -114,10 +107,11 @@ model Solution {
   id           String   @id @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  title        String   @db.Text
   githubLink   String
   liveSiteLink String
   description  String   @db.Text
-  tags         Tag[]
+  tags         String   @db.Text
   screenshot   String // You may choose an appropriate type for storing image data
   taskId       String
   task         Task     @relation(fields: [taskId], references: [id])

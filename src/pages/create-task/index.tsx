@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import z from "zod";
@@ -25,6 +25,7 @@ import { Textarea } from "~/components/ui/textarea";
 
 import "@uiw/react-markdown-preview/markdown.css";
 import "@uiw/react-md-editor/markdown-editor.css";
+import { useImageUpload } from "~/hooks/useImageUpload";
 import { api } from "~/utils/api";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -68,11 +69,6 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
-type ResponseData = {
-  status: "success" | "error";
-  message: string;
-  imageUrl: string | null;
-};
 
 // type DataWithoutImageFile = Omit<FormData, "imageFile">;
 
@@ -85,9 +81,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const CreateTask = () => {
   const { data: sessionData } = useSession();
+  const { handleImageChange, uploadImage, selectedImage } = useImageUpload();
   const router = useRouter();
   //   const [brief, setBrief] = useState<string | undefined>("Default Text na awa");
   //   const [preview, setPreview] = useState<"write" | "preview">("write");
+<<<<<<< HEAD
   const [selectedImage, setSelectedImage] = useState<{
      file: string | null;
     url: string;
@@ -99,6 +97,19 @@ const CreateTask = () => {
     error: "",
     loading: false,
   });
+=======
+  // const [selectedImage, setSelectedImage] = useState<{
+  //   file: string | null;
+  //   url: string;
+  //   error: string;
+  //   loading: boolean;
+  // }>({
+  //   file: null,
+  //   url: "",
+  //   error: "",
+  //   loading: false,
+  // });
+>>>>>>> cce6bf0c14c203b79b7702769e07226d304434e5
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -137,6 +148,7 @@ const CreateTask = () => {
     return <h2 className="my-36 text-center">Not Authorized</h2>;
   }
 
+<<<<<<< HEAD
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -200,6 +212,8 @@ const CreateTask = () => {
     }
   };
 
+=======
+>>>>>>> cce6bf0c14c203b79b7702769e07226d304434e5
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!selectedImage.url || isPosting) {
       return;
@@ -273,7 +287,7 @@ const CreateTask = () => {
                               name={field.name}
                               onChange={(e) => {
                                 field.onChange(e.target.files?.[0]);
-                                console.log(e.target.files?.[0]?.size);
+
                                 handleImageChange(e);
                               }}
                               ref={field.ref}
@@ -295,6 +309,7 @@ const CreateTask = () => {
                               if (selectedImage.file) {
                                 void uploadImage({
                                   imageFile: selectedImage.file,
+                                  folderName: "nexascale-frontend-mentor-tasks",
                                 });
                               }
                             }}

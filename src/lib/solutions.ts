@@ -1,0 +1,110 @@
+export const solutions = [
+    {
+        id:"solution_1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://www.harpreet-singh-147/frontend-mentor-nft-preview-card-component",
+        livesiteLink: "https://harpreet-singh-147.github.io/frontend-mentor-nft-preview-card-component/",
+        description: "Feedback would be greatly appreciated. Enjoy the process - have fun building. Merry Christmas!",
+        tags: ["HTML", "CSS"],
+        taskId: "task_23",
+        userId: "user_50",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_2",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_70",
+        userId: "user_49",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_3",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_10",
+        userId: "user_2",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_4",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_15",
+        userId: "user_67",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_5",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_25",
+        userId: "user_55",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_6",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_30",
+        userId: "user_27",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_7",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_6",
+        userId: "user_34",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_8",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://github.com/manjubhaskar02/FM-13-Todo-app",
+        livesiteLink: "https://manjubhaskar02.github.io/FM-13-Todo-app/",
+        description: "Beyond adding List-Items , this project also includes -Theme-Switcher, -Drag and Drop Function, -Restoring the List-Items Welcoming all suggestions to improve this project.",
+        tags: ["React", "Tailwind"],
+        taskId: "task_9",
+        userId: "user_21",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    },
+    {
+        id:"solution_9",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        githubLink: "https://www.harpreet-singh-147/frontend-mentor-nft-preview-card-component",
+        livesiteLink: "https://harpreet-singh-147.github.io/frontend-mentor-nft-preview-card-component/",
+        description: "Feedback would be greatly appreciated. Enjoy the process - have fun building. Merry Christmas!",
+        tags: ["HTML", "CSS"],
+        taskId: "task_94",
+        userId: "user_18",
+        screenshot: "https://images.unsplash.com/photo-1440778303588-435521a205bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXxlbnwwfHwwfHx8MA%3D%3D"
+    }
+]

@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   const isLoggedin = status === "authenticated";
-  console.log(sessionData);
+
   return (
     <header
       className="fixed left-0 

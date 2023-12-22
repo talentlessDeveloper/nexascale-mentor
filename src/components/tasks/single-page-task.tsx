@@ -41,7 +41,6 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
   const { isLoading: isStartingUserTask, mutate } =
     api.userTask.create.useMutation({
       onSuccess: () => {
-        void console.log("Successfully created task");
         toast.success("Challenge Successfully Started");
         void router.push(`/challenges/${task.id}/hub`);
         // TODO: ensure you invalidate all userTasks
