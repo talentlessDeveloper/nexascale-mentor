@@ -1,0 +1,20 @@
+export const frontendTechOptions = [
+  { label: "Chakra UI", value: "chakra-ui" },
+  { label: "Tailwind CSS", value: "tailwind" },
+  { label: "React", value: "react" },
+  { label: "Vue.js", value: "vue" },
+  { label: "Next.js", value: "nextjs" },
+  { label: "Remix", value: "remix" },
+  { label: "Angular", value: "angular" },
+  { label: "Svelte", value: "svelte" },
+  { label: "Ember.js", value: "ember" },
+  { label: "Backbone.js", value: "backbone" },
+  { label: "JQuery", value: "jquery" },
+  { label: "Bootstrap", value: "bootstrap" },
+  { label: "Material-UI", value: "material-ui" },
+  { label: "Ant Design", value: "ant-design" },
+  { label: "Gatsby", value: "gatsby" },
+  { label: "Gsap", value: "gsap" },
+  { label: "Framer Motion", value: "framer-motion" },
+  // Add more technologies as needed
+];
