@@ -209,9 +209,10 @@ const CreateTask = () => {
     const taskData = {
       ...restData,
       image: selectedImage.url,
+      userId: sessionData.user.id,
     };
 
-    console.log(taskData, "==>");
+    // console.log(taskData, "==>");
     mutate(taskData);
   };
 

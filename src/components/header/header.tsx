@@ -3,6 +3,7 @@ import {
   ChevronUp,
   Github,
   Home,
+  Loader2,
   LogOut,
   Menu,
   Pen,
@@ -137,7 +138,11 @@ const Header = () => {
                 }}
               >
                 <span className="font-semibold uppercase italic">
-                  Log in with Github
+                  {status === "loading" ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    "Log in with Github"
+                  )}
                 </span>{" "}
                 <span>
                   <Github />
