@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { signIn } from "next-auth/react";
 import { Github, Loader2 } from "lucide-react";
-import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { Button } from "../ui/button";
 
 const SignInBtn = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
   return (
     <Button
       className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent"
