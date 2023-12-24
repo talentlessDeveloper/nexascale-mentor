@@ -9,10 +9,10 @@ type TaskProps = {
 const TaskCard = ({ task }: TaskProps) => {
   return (
     <div className="overflow-hidden rounded-tl-lg rounded-tr-lg shadow-lg shadow-black/10 dark:shadow-white/10">
-      <div>
+      <div className="h-80 lg:h-96">
         <Link
           href={`/challenges/${task.id}`}
-          className="relative h-80 lg:h-96 "
+          className="relative block h-80 lg:h-96"
         >
           <CldImage
             src={task.image}
