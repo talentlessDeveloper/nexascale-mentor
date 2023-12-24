@@ -13,10 +13,11 @@ import {
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeToggle from "../themes/toggle-theme";
 import { Button } from "../ui/button";
 import HeaderMenu from "./header-menu";
+import { useRouter } from "next/router";
 
 const Header = () => {
   const { status, data: sessionData } = useSession();
@@ -24,14 +25,30 @@ const Header = () => {
   const [mobile, setMobile] = useState<boolean>(false);
 
   const toggleDropdown = () => {
-    setDropdown(!dropdown);
+    setDropdown((prevState) => !prevState);
   };
 
   const menuToggle = () => {
-    setMobile(!mobile);
+    setMobile((prevState) => !prevState);
   };
 
   const isLoggedin = status === "authenticated";
+  const router = useRouter();
+
+  useEffect(() => {
+    const closeNavigation = () => setMobile(false);
+    router.events.on("routeChangeStart", closeNavigation);
+
+    return () => router.events.off("routeChangeStart", closeNavigation);
+  }, [router.events]);
+
+  useEffect(() => {
+    if (mobile) {
+      document.body.style.overflow = "clip";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [mobile]);
 
   return (
     <header
