@@ -32,7 +32,7 @@ const Challenges = () => {
         </div>
       </div>
       <div className="container pt-10">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid  grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5">
           {content}
         </div>
       </div>
