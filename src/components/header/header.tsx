@@ -1,23 +1,22 @@
 import {
   ChevronDown,
   ChevronUp,
-  Github,
   Home,
-  Loader2,
   LogOut,
   Menu,
   Pen,
   User,
   X,
 } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import SignInBtn from "../shared/signin-button";
 import ThemeToggle from "../themes/toggle-theme";
 import { Button } from "../ui/button";
 import HeaderMenu from "./header-menu";
-import { useRouter } from "next/router";
 
 const Header = () => {
   const { status, data: sessionData } = useSession();
@@ -64,6 +63,7 @@ const Header = () => {
             width={123}
             height={30}
             className="dark:text-white dark:mix-blend-screen"
+            priority
           />
         </Link>
         <div className="flex items-center justify-center gap-4">
@@ -146,25 +146,7 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <Button
-                className="flex gap-2  rounded-full bg-accent/90 p-8 text-accent-foreground hover:bg-accent"
-                onClick={() => {
-                  void signIn("github", {
-                    callbackUrl: "/profile",
-                  });
-                }}
-              >
-                <span className="font-semibold uppercase italic">
-                  {status === "loading" ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    "Log in with Github"
-                  )}
-                </span>{" "}
-                <span>
-                  <Github />
-                </span>
-              </Button>
+              <SignInBtn />
             )}
           </div>
           <div className="flex items-center gap-2">
