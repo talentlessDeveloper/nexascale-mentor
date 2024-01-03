@@ -3,6 +3,9 @@ import { Delete, Edit } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { CldImage } from "next-cloudinary";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { cn } from "~/lib/utils";
+import { api } from "~/utils/api";
 
 type TaskProps = {
   task: Task;
@@ -10,6 +13,25 @@ type TaskProps = {
 
 const TaskCard = ({ task }: TaskProps) => {
   const { data: sessionData } = useSession();
+  const { isLoading: isDeleting, mutate } = api.task.delete.useMutation({
+    onSuccess: () => {
+      void ctx.task.getAll.invalidate();
+      void ctx.userTask.invalidate();
+      toast.success("Task deleted successfully");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to delete! Please try again later.");
+      }
+    },
+  });
+  const ctx = api.useUtils();
+  const deleteTask = (taskId: string) => {
+    mutate({ taskId });
+  };
   return (
     <div className="overflow-hidden rounded-tl-lg rounded-tr-lg shadow-lg shadow-black/10 dark:shadow-white/10">
       <div className="h-80 lg:h-96">
@@ -33,8 +55,12 @@ const TaskCard = ({ task }: TaskProps) => {
           </Link>
           {sessionData?.user.role === "admin" ? (
             <div className="flex items-center gap-1 ">
-              <button>
-                <Delete className="text-red-500" />
+              <button onClick={() => deleteTask(task.id)}>
+                <Delete
+                  className={cn("text-red-500", {
+                    "animate-pulse": isDeleting,
+                  })}
+                />
               </button>
               <button>
                 <Edit className="text-emerald-500" />
