@@ -89,4 +89,30 @@ export const taskRouter = createTRPCRouter({
       if (!task) throw new TRPCError({ code: "NOT_FOUND" });
       return task;
     }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      return ctx.db.$transaction([
+        ctx.db.taskStart.deleteMany({
+          where: {
+            taskId: input.taskId,
+          },
+        }),
+        ctx.db.task.delete({
+          where: {
+            id: input.taskId,
+          },
+        }),
+      ]);
+    }),
 });
