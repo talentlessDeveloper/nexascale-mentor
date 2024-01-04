@@ -1,68 +1,69 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Paperclip } from "lucide-react";
-import { type GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { taskFormSchema as formSchema } from "~/lib/form-schemas";
-import { getServerAuthSession } from "~/server/auth";
-
+import React from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import PageTitle from "~/components/shared/page-title";
 import { Button } from "~/components/ui/button";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  Form,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-
-import "@uiw/react-markdown-preview/markdown.css";
-import "@uiw/react-md-editor/markdown-editor.css";
-import { useImageUpload } from "~/hooks/useImageUpload";
+// import { taskFormSchema as formSchema } from "~/lib/form-schemas";
+import dynamic from "next/dynamic";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { type z } from "zod";
+import { CldImage } from "next-cloudinary";
+import { useImageUpload } from "~/hooks/useImageUpload";
+import { Paperclip } from "lucide-react";
+import { Textarea } from "~/components/ui/textarea";
+import toast from "react-hot-toast";
+import { ACCEPTED_IMAGE_MIME_TYPES, MAX_FILE_SIZE } from "~/lib/form-schemas";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
-// const MDPreview = dynamic(
-//   () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
-//   { ssr: false },
-// );
+
+const formSchema = z.object({
+  title: z.string().max(255, {
+    message: "Title cannot be empty characters",
+  }),
+  description: z.string().min(15, {
+    message: "Description must be at least 15 characters",
+  }),
+  assets: z.string(),
+  brief: z.string(),
+  imageFile: z
+    .unknown()
+    .refine((file: unknown) => {
+      if (file instanceof File) {
+        return file.size <= MAX_FILE_SIZE;
+      }
+      return false;
+    }, `Max image size is 1MB.`)
+    .optional()
+    .refine((file: unknown) => {
+      if (file instanceof File) {
+        return ACCEPTED_IMAGE_MIME_TYPES.includes(file.type);
+      }
+      return false;
+    }, "Only .jpg, .jpeg, .png and .webp formats are supported.")
+    .optional(),
+});
 
 type FormData = z.infer<typeof formSchema>;
-
-// type DataWithoutImageFile = Omit<FormData, "imageFile">;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
-  return {
-    props: { session },
-  };
-};
-
-const CreateTask = () => {
-  const { data: sessionData } = useSession();
+const Edit = () => {
   const { handleImageChange, uploadImage, selectedImage } = useImageUpload();
   const router = useRouter();
-  //   const [brief, setBrief] = useState<string | undefined>("Default Text na awa");
-  //   const [preview, setPreview] = useState<"write" | "preview">("write");
-  // const [selectedImage, setSelectedImage] = useState<{
-  //   file: string | null;
-  //   url: string;
-  //   error: string;
-  //   loading: boolean;
-  // }>({
-  //   file: null,
-  //   url: "",
-  //   error: "",
-  //   loading: false,
-  // });
+  const slug = router.query.slug;
+
+  const { data: task, isLoading } = api.task.getById.useQuery({
+    taskId: slug as string,
+  });
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,64 +73,80 @@ const CreateTask = () => {
       description: "",
       brief: "",
     },
+    values: task,
   });
+
   const ctx = api.useUtils();
 
-  const { isLoading: isPosting, mutate } = api.task.create.useMutation({
+  const { isLoading: isEditing, mutate } = api.task.edit.useMutation({
     onSuccess: () => {
       form.reset();
       void ctx.task.getAll.invalidate();
-      toast.success("Task created successfully");
+      void ctx.task.getById.invalidate({
+        taskId: task?.id,
+      });
+      toast.success("Task Edited successfully");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to post! Please try again later.");
+        toast.error("Failed to edit! Please try again later.");
       }
     },
   });
 
-  useEffect(() => {
-    if (sessionData?.user.role !== "admin") {
-      void router.replace("/");
-    }
-  }, [router, sessionData?.user.role]);
+  // const onSubmit: SubmitHandler<FormData> = (data) => {
+  //   console.log(data);
+  //   if (!isEditing) {
+  //     return;
+  //   }
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const { imageFile, ...restData } = data;
+  //   const taskData = {
+  //     ...restData,
+  //     image: selectedImage.url ?? task.image,
+  //   };
+  //   mutate(taskData)
+  // };
 
-  if (sessionData?.user.role !== "admin") {
-    return <h2 className="my-36 text-center">Not Authorized</h2>;
+  if (isLoading) {
+    return (
+      <div className="container py-28">
+        <p className="text-center text-2xl">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="py-28 text-center">
+        <p className="lg:text-5xl">404</p>
+      </div>
+    );
   }
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    if (!selectedImage.url || isPosting) {
+    console.log(data);
+    if (isEditing) {
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { imageFile, ...restData } = data;
     const taskData = {
       ...restData,
-      image: selectedImage.url,
-      userId: sessionData.user.id,
+      image: selectedImage.url ?? task.image,
+      taskId: task.id,
     };
-
-    // console.log(taskData, "==>");
     mutate(taskData);
   };
 
   return (
     <section>
-      <div className="container py-28">
-        <div className="border-y border-solid border-primary/50">
-          <div className="container flex justify-between">
-            <div className="border-x-primborder-primary/50  flex h-full w-36 items-center justify-center border-x border-solid px-2 py-3">
-              <h1 className="border-primary text-lg font-bold uppercase text-primary">
-                Create Task
-              </h1>
-            </div>
-          </div>
-        </div>
-        <div className="py-20">
+      <div className="py-28">
+        <PageTitle title="Edit Task" />
+        <div className="container">
           <Form {...form} handleSubmit={() => form.handleSubmit(onSubmit)}>
             <form
               className="mx-auto flex max-w-3xl flex-col gap-4"
@@ -149,9 +166,16 @@ const CreateTask = () => {
                 )}
               />
               <div className="flex flex-col gap-2">
-                {selectedImage.file && (
+                {selectedImage.file ? (
                   <Image
                     src={selectedImage.file}
+                    width={100}
+                    height={100}
+                    alt="file"
+                  />
+                ) : (
+                  <CldImage
+                    src={task?.image}
                     width={100}
                     height={100}
                     alt="file"
@@ -255,7 +279,7 @@ const CreateTask = () => {
               />
 
               <Button type="submit">
-                {isPosting ? "Creating task..." : "Create task"}
+                {isEditing ? "Editing task..." : "Edit task"}
               </Button>
             </form>
           </Form>
@@ -265,4 +289,4 @@ const CreateTask = () => {
   );
 };
 
-export default CreateTask;
+export default Edit;
