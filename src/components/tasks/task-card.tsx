@@ -56,15 +56,17 @@ const TaskCard = ({ task }: TaskProps) => {
           {sessionData?.user.role === "admin" ? (
             <div className="flex items-center gap-1 ">
               <button onClick={() => deleteTask(task.id)}>
+                <span className="sr-only">Delete Task</span>
                 <Delete
                   className={cn("text-red-500", {
                     "animate-pulse": isDeleting,
                   })}
                 />
               </button>
-              <button>
+              <Link href={`/challenges/${task.id}/edit`}>
+                <span className="sr-only">Edit Task</span>
                 <Edit className="text-emerald-500" />
-              </button>
+              </Link>
             </div>
           ) : null}
         </div>
