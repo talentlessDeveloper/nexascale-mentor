@@ -115,4 +115,33 @@ export const taskRouter = createTRPCRouter({
         }),
       ]);
     }),
+  edit: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().max(255, {
+          message: "Title cannot be empty characters",
+        }),
+        description: z.string().min(15, {
+          message: "Description must be at least 15 characters",
+        }),
+        assets: z.string(),
+        brief: z.string(),
+        image: z.string(),
+        taskId: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const { taskId, ...taskData } = input;
+
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      return ctx.db.task.update({
+        where: {
+          id: taskId,
+        },
+        data: taskData,
+      });
+    }),
 });
