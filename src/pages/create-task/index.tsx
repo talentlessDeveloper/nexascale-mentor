@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import z from "zod";
+import { taskFormSchema as formSchema } from "~/lib/form-schemas";
 import { getServerAuthSession } from "~/server/auth";
 
 import { Button } from "~/components/ui/button";
@@ -27,46 +27,13 @@ import "@uiw/react-markdown-preview/markdown.css";
 import "@uiw/react-md-editor/markdown-editor.css";
 import { useImageUpload } from "~/hooks/useImageUpload";
 import { api } from "~/utils/api";
+import { type z } from "zod";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 // const MDPreview = dynamic(
 //   () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
 //   { ssr: false },
 // );
-
-const MAX_FILE_SIZE = 1024 * 1024 * 1;
-const ACCEPTED_IMAGE_MIME_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/avif",
-  "image/webp",
-];
-
-const formSchema = z.object({
-  title: z.string().max(255, {
-    message: "Title cannot be empty characters",
-  }),
-  description: z.string().min(15, {
-    message: "Description must be at least 15 characters",
-  }),
-  assets: z.string(),
-  brief: z.string(),
-  imageFile: z
-    .unknown()
-    .refine((file: unknown) => {
-      if (file instanceof File) {
-        return file.size <= MAX_FILE_SIZE;
-      }
-      return false;
-    }, `Max image size is 1MB.`)
-    .refine((file: unknown) => {
-      if (file instanceof File) {
-        return ACCEPTED_IMAGE_MIME_TYPES.includes(file.type);
-      }
-      return false;
-    }, "Only .jpg, .jpeg, .png and .webp formats are supported."),
-});
 
 type FormData = z.infer<typeof formSchema>;
 
