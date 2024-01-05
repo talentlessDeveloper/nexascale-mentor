@@ -4,7 +4,7 @@ import SolutionCard from '~/components/solutions/solution-card'
 
 const index = () => {
 
-  const result = solutions.map(solution => {
+ const data =  solutions.map(solution => {
     return <SolutionCard key= {solution.id} solution={solution}/> 
   })
 
@@ -21,7 +21,7 @@ const index = () => {
       </div>
       <div className="container pt-10">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {result}
+          {data}
         </div>
       </div>
     </section>

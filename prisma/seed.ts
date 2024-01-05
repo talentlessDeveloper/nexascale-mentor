@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { PrismaClient } from "@prisma/client";
 import { tasks, userTasks, users } from "./data";
 
@@ -11,7 +14,7 @@ async function main() {
   await prisma.user.createMany({ data: users });
 
   await prisma.task.createMany({
-    data: tasks,
+    data: tasks, 
   });
 
   await prisma.taskStart.createMany({
@@ -25,11 +28,8 @@ main()
     console.error(e);
     process.exit(1);
   })
-<<<<<<< HEAD
-  .finally( () => {
-=======
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
+ // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .finally(async () => {
->>>>>>> cce6bf0c14c203b79b7702769e07226d304434e5
     await prisma.$disconnect();
   });

@@ -85,19 +85,6 @@ const CreateTask = () => {
   const router = useRouter();
   //   const [brief, setBrief] = useState<string | undefined>("Default Text na awa");
   //   const [preview, setPreview] = useState<"write" | "preview">("write");
-<<<<<<< HEAD
-  const [selectedImage, setSelectedImage] = useState<{
-     file: string | null;
-    url: string;
-    error: string;
-    loading: boolean;
-  }>({
-    file: null,
-    url: "",
-    error: "",
-    loading: false,
-  });
-=======
   // const [selectedImage, setSelectedImage] = useState<{
   //   file: string | null;
   //   url: string;
@@ -109,7 +96,6 @@ const CreateTask = () => {
   //   error: "",
   //   loading: false,
   // });
->>>>>>> cce6bf0c14c203b79b7702769e07226d304434e5
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -148,72 +134,6 @@ const CreateTask = () => {
     return <h2 className="my-36 text-center">Not Authorized</h2>;
   }
 
-<<<<<<< HEAD
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = (loadEvent) => {
-      if (loadEvent.target?.result) {
-        setSelectedImage({
-          ...selectedImage,
-          file: loadEvent.target.result as string,
-        });
-      }
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const uploadImage = async (body: { imageFile: string }) => {
-    if (selectedImage.loading) {
-      return;
-    }
-    setSelectedImage({
-      ...selectedImage,
-      loading: true,
-    });
-    try {
-      const res = await fetch("/api/uploadImage", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-      const data = (await res.json()) as ResponseData;
-      if (res.ok) {
-        setSelectedImage({
-          ...selectedImage,
-          url: data.imageUrl!,
-          loading: false, 
-        });
-        toast.success(data.message);
-      } else {
-        setSelectedImage({
-          ...selectedImage,
-          error: data.message,
-          loading: false,
-        });
-        toast.error(data.message);
-      }
-    } catch (error) {
-      setSelectedImage({
-        ...selectedImage,
-        error: "Server Error, Try again Later",
-        loading: false,
-      });
-      toast.error("Server Error, Try again Later");
-    }
-  };
-
-=======
->>>>>>> cce6bf0c14c203b79b7702769e07226d304434e5
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!selectedImage.url || isPosting) {
       return;
