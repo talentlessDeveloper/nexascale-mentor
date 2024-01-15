@@ -13,13 +13,32 @@ type TaskProps = {
 
 const TaskCard = ({ task }: TaskProps) => {
   const { data: sessionData } = useSession();
+  const ctx = api.useUtils();
   const { isLoading: isDeleting, mutate } = api.task.delete.useMutation({
+    onMutate: async ({ taskId }) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await ctx.task.getAll.cancel();
+
+      // Snapshot the previous value
+      const previousTasks = ctx.task.getAll.getData();
+
+      // Optimistically update to the new value
+      ctx.task.getAll.setData(
+        undefined,
+        (old) => old?.filter((oldTask) => oldTask.id !== taskId),
+      );
+      // Return a context object with the snapshotted value
+      return { previousTasks };
+    },
     onSuccess: () => {
       void ctx.task.getAll.invalidate();
       void ctx.userTask.invalidate();
       toast.success("Task deleted successfully");
     },
-    onError: (e) => {
+    onError: (e, _newTodo, context) => {
+      // Rollback to the previous value if mutation fails
+      ctx.task.getAll.setData(undefined, context?.previousTasks);
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
@@ -28,7 +47,7 @@ const TaskCard = ({ task }: TaskProps) => {
       }
     },
   });
-  const ctx = api.useUtils();
+
   const deleteTask = (taskId: string) => {
     mutate({ taskId });
   };
