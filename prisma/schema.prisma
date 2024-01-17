@@ -53,7 +53,7 @@ model User {
   emailVerified DateTime?
   image         String?
   role          String?
-  username      String?
+  username      String?     @unique
   accounts      Account[]
   sessions      Session[]
   points        Int         @default(0)
@@ -117,6 +117,7 @@ model Solution {
   task         Task     @relation(fields: [taskId], references: [id])
   likes        Likes[]
   userId       String
+  username     String?
   user         User     @relation(fields: [userId], references: [id])
 
   @@index([taskId])
