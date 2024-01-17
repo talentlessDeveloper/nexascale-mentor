@@ -37,4 +37,17 @@ export const solutionsRouter = createTRPCRouter({
       orderBy: { createdAt: "asc" },
     });
   }),
+  getByUserName: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findMany({
+        where: {
+          username: input.username,
+        },
+      });
+    }),
 });
