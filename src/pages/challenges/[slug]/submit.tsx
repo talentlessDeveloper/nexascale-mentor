@@ -130,6 +130,7 @@ const Submit = () => {
       screenshot: selectedImage.url,
       taskId: slug,
       userId: sessionData?.user.id,
+      username: sessionData?.user.username,
     };
     mutate(solutionsData);
   };

@@ -119,7 +119,9 @@ const Header = () => {
                       <span>
                         <User size={30} />
                       </span>
-                      <Link href="/profile">Profile</Link>
+                      <Link href={`/profile/${sessionData?.user.username}`}>
+                        Profile
+                      </Link>
                     </li>
                     <li className="px-3 py-3">
                       <Button

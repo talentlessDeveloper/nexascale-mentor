@@ -11,6 +11,7 @@ import LoggedInModal from "../modals/logged-in";
 import PageTitle from "../shared/page-title";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import ModalLayout from "../modals/modal-layout";
 
 const MDPreview = dynamic(
   () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
@@ -71,10 +72,12 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
   };
   return (
     <>
-      <LoggedInModal
-        openLoggedInModal={openLoggedInModal}
-        setOpenLoggedInModal={setOpenLoggedInModal}
-      />
+      <ModalLayout
+        openModal={openLoggedInModal}
+        setOpenModal={setOpenLoggedInModal}
+      >
+        <LoggedInModal />
+      </ModalLayout>
       <div className="py-28 font-inter">
         <PageTitle title="Challenge" />
         <div className="container">

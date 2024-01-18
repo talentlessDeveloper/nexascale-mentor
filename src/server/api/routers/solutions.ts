@@ -18,6 +18,7 @@ export const solutionsRouter = createTRPCRouter({
         screenshot: z.string(),
         taskId: z.string(),
         userId: z.string(),
+        username: z.string(),
       }),
     )
     .mutation(({ ctx, input }) => {
@@ -37,4 +38,17 @@ export const solutionsRouter = createTRPCRouter({
       orderBy: { createdAt: "asc" },
     });
   }),
+  getByUserName: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findMany({
+        where: {
+          username: input.username,
+        },
+      });
+    }),
 });
