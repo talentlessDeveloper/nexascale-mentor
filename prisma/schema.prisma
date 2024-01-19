@@ -46,13 +46,19 @@ model Session {
   @@index([userId])
 }
 
+enum Role {
+  USER
+
+  ADMIN
+}
+
 model User {
   id            String      @id @default(cuid())
   name          String?
   email         String?     @unique
   emailVerified DateTime?
   image         String?
-  role          String?
+  role          Role        @default(USER)
   username      String?     @unique
   accounts      Account[]
   sessions      Session[]
