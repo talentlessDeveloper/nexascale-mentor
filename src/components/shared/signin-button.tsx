@@ -15,7 +15,7 @@ const SignInBtn = () => {
         }
         setLoading(true);
         await signIn("github", {
-          callbackUrl: "/profile",
+          callbackUrl: "/challenges",
         });
         // if (login && login?.ok) {
         //   void router.push(login.url);
