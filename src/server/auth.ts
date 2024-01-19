@@ -56,9 +56,9 @@ export const authOptions: NextAuthOptions = {
   providers: [
     GithubProvider({
       profile(profile: GithubProfile) {
-        let role = "user";
+        let role: "USER" | "ADMIN" = "USER";
         if (profile?.email === "kareemope52@gmail.com") {
-          role = "admin";
+          role = "ADMIN";
         }
         const profileToReturn = {
           role,
