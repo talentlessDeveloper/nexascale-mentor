@@ -92,12 +92,12 @@ const CreateTask = () => {
   });
 
   useEffect(() => {
-    if (sessionData?.user.role !== "admin") {
+    if (sessionData?.user.role?.toLowerCase() !== "admin") {
       void router.replace("/");
     }
   }, [router, sessionData?.user.role]);
 
-  if (sessionData?.user.role !== "admin") {
+  if (sessionData?.user.role?.toLowerCase() !== "admin") {
     return <h2 className="my-36 text-center">Not Authorized</h2>;
   }
 

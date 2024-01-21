@@ -55,7 +55,7 @@ export const taskRouter = createTRPCRouter({
         ...input,
       };
 
-      if (ctx.session.user.role !== "admin")
+      if (ctx.session.user.role?.toLowerCase() !== "admin")
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       return ctx.db.task.create({
