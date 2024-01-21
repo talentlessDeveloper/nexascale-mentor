@@ -68,7 +68,7 @@ export const taskRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
     return ctx.db.task.findMany({
       orderBy: { createdAt: "desc" },
     });
