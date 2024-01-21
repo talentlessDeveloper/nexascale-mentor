@@ -16,5 +16,7 @@ export const frontendTechOptions = [
   { label: "Gatsby", value: "gatsby" },
   { label: "Gsap", value: "gsap" },
   { label: "Framer Motion", value: "framer-motion" },
+  { label: "d3", value: "d3" },
+  { label: "accessibility", value: "accessibility" },
   // Add more technologies as needed
 ];
