@@ -7,9 +7,14 @@ import {
   type DefaultUser,
 } from "next-auth";
 import GithubProvider, { type GithubProfile } from "next-auth/providers/github";
+// import GoogleProvider, {type GoogleProfile} from "next-auth/providers/google"
 
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
+
+// import { PrismaClient } from "@prisma/client";
+
+// const prisma = new PrismaClient();
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -41,6 +46,7 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(db),
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
@@ -52,7 +58,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db),
   providers: [
     GithubProvider({
       profile(profile: GithubProfile) {

@@ -1,10 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
 datasource db {
   provider     = "mysql"
   // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
@@ -13,6 +9,10 @@ datasource db {
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 // Necessary for Next auth
@@ -30,7 +30,8 @@ model Account {
   scope                    String?
   id_token                 String? @db.Text
   session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -48,7 +49,6 @@ model Session {
 
 enum Role {
   USER
-
   ADMIN
 }
 
@@ -58,14 +58,14 @@ model User {
   email         String?     @unique
   emailVerified DateTime?
   image         String?
-  role          Role        @default(USER)
   username      String?     @unique
-  accounts      Account[]
-  sessions      Session[]
+  role          Role        @default(USER)
   points        Int         @default(0)
   likes         Likes[]
   startedTasks  TaskStart[]
   solutions     Solution[]
+  accounts      Account[]
+  sessions      Session[]
 }
 
 model VerificationToken {
