@@ -21,6 +21,14 @@ export const taskFormSchema = z.object({
   imageFile: z
     .unknown()
     .refine((file: unknown) => {
+      if (!file) {
+        return false; // File not selected
+      }
+
+      return true;
+    }, "Please select an image.")
+
+    .refine((file: unknown) => {
       if (file instanceof File) {
         return file.size <= MAX_FILE_SIZE;
       }
