@@ -97,7 +97,7 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      if (ctx.session.user.role !== "admin") {
+      if (ctx.session.user.role?.toLowerCase() !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
         });
@@ -133,7 +133,7 @@ export const taskRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       const { taskId, ...taskData } = input;
 
-      if (ctx.session.user.role !== "admin") {
+      if (ctx.session.user.role?.toLowerCase() !== "admin") {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
