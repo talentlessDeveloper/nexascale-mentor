@@ -51,4 +51,50 @@ export const solutionsRouter = createTRPCRouter({
         },
       });
     }),
+  getById: publicProcedure
+    .input(
+      z.object({
+        solutionId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findUnique({
+        where: {
+          id: input.solutionId,
+        },
+      });
+    }),
+  hasSubmitted: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        userId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findFirst({
+        where: {
+          userId: input.userId,
+          taskId: input.taskId,
+        },
+      });
+    }),
+  delete: protectedProcedure
+    .input(
+      z.object({
+        solutionId: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      if (!ctx.session.user) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      return ctx.db.solution.delete({
+        where: {
+          id: input.solutionId,
+        },
+      });
+    }),
 });
