@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import { HeartIcon } from "lucide-react";
 import { CldImage } from "next-cloudinary";
-import Image from "next/image";
 import Link from "next/link";
 import { type Solution } from "../tasks/types/ITask";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { api } from "~/utils/api";
+import UserCardInfo from "../shared/user-card-info";
 dayjs.extend(relativeTime);
 
 type SolutionCardProps = {
@@ -47,7 +47,7 @@ const SolutionCard = ({ solution, pathname }: SolutionCardProps) => {
               </h2>
             </Link>
             <div className="flex gap-1 text-blue-500">
-              {solution.tags.split(",").map((t, index) => (
+              {solution.tags.split(",").map((t: string, index) => (
                 <span key={`tags-${index}-${t}`}>#{t}</span>
               ))}
             </div>
@@ -63,37 +63,8 @@ const SolutionCard = ({ solution, pathname }: SolutionCardProps) => {
             </button>
           </div>
         </div>
-        {!pathname.includes("profile") ? (
-          <div className="flex items-center gap-2 py-3">
-            {userData ? (
-              <Link href={`/profile/${userData?.username}`}>
-                <Image
-                  width={48}
-                  height={48}
-                  src={userData.image!}
-                  alt={"Ope"}
-                  className="h-12 w-12 rounded-full"
-                />
-              </Link>
-            ) : null}
-            {userData ? (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-[2px]">
-                  <Link
-                    href={`/profile/${userData?.username}`}
-                    className="text-sm font-bold hover:underline"
-                  >
-                    {userData?.name}
-                  </Link>
-                  <span className="font-bold">.</span>
-                  <span className="text-bold text-blue-900">
-                    {userData?.points}
-                  </span>
-                </div>
-                <span>@{userData?.username}</span>
-              </div>
-            ) : null}
-          </div>
+        {!pathname.includes("profile") && userData ? (
+          <UserCardInfo userData={userData} />
         ) : null}
         <div className="py-3">
           <p>{solution.description}</p>

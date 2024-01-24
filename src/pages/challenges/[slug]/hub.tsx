@@ -1,12 +1,11 @@
-import { MoreVerticalIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { CldImage } from "next-cloudinary";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import ModalLayout from "~/components/modals/modal-layout";
 import PageTitle from "~/components/shared/page-title";
+import SinglePageHero from "~/components/shared/single-page-hero";
 import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
@@ -17,7 +16,6 @@ const Hub = () => {
   const { data: sessionData } = useSession();
 
   const [openRemoveChallenge, setOpenRemoveChallenge] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
 
   const { data: task, isLoading } = api.task.getById.useQuery({
     taskId: slug as string,
@@ -26,6 +24,18 @@ const Hub = () => {
   const { data: userTask } = api.userTask.getById.useQuery({
     taskId: slug as string,
   });
+
+  const userId = sessionData?.user.id;
+  const { data: hasSubmittedData } = api.solution.hasSubmitted.useQuery(
+    {
+      taskId: slug as string,
+      userId: userId!,
+    },
+    {
+      enabled: !!userId!,
+    },
+  );
+
   const { isLoading: isRemoving, mutate } = api.userTask.delete.useMutation({
     onSuccess: () => {
       void ctx.userTask.hasStarted.invalidate({
@@ -95,49 +105,11 @@ const Hub = () => {
         </>
       </ModalLayout>
       <PageTitle title="Hub" />
-      <div className="relative  h-80  lg:h-96">
-        <div className="relative z-[2] flex h-full w-full flex-col items-center justify-center gap-5 bg-black/80">
-          <Button
-            className="absolute right-7 top-7 h-12 w-12 rounded-full"
-            onClick={() => setShowOptions((prev) => !prev)}
-          >
-            <MoreVerticalIcon />
-          </Button>
-          {showOptions ? (
-            <ul className="absolute right-9 top-20 divide-y rounded-md bg-white px-5">
-              <li className="py-3">
-                <Link href={`/challenges/${slug as string}`}>
-                  Visit Challenge Page
-                </Link>
-              </li>
-              <li className="py-3">
-                <button
-                  className="p-0 font-normal text-red-500"
-                  onClick={() => setOpenRemoveChallenge(true)}
-                >
-                  Remove From My Challenges
-                </button>
-              </li>
-            </ul>
-          ) : null}
-
-          <h2 className="text-2xl font-semibold text-white lg:text-3xl">
-            Challenge Hub
-          </h2>
-
-          <h3 className="text-2xl font-semibold text-white lg:text-4xl">
-            {task?.title}
-          </h3>
-        </div>
-
-        <CldImage
-          src={task.image}
-          alt={task.title}
-          fill
-          sizes="100vw"
-          className="h-full w-full rounded-none rounded-tl-lg rounded-tr-lg object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </div>
+      <SinglePageHero
+        prop={task}
+        setOpenModal={setOpenRemoveChallenge}
+        type="task"
+      />
       <div className="container mt-5 space-y-3">
         <h3 className="text-2xl font-semibold">Assets</h3>
         <p>
@@ -147,18 +119,24 @@ const Hub = () => {
           </a>{" "}
         </p>
         <div className="relative flex flex-col items-center justify-start gap-7 rounded-2xl bg-primary-foreground py-10">
-          <h2 className="text-3xl font-semibold">Submit Your Solution</h2>
-          <p>
-            Once you’ve completed this challenge, click the button below and
-            fill in the form to submit your solution.
-          </p>
-
-          <Link
-            href={`/challenges/${task.id}/submit`}
-            className="flex items-center justify-center rounded-md bg-orange-300 px-8 py-2 text-xl font-semibold uppercase italic text-black duration-300 hover:bg-orange-500"
-          >
-            Submit Solution
-          </Link>
+          {hasSubmittedData ? (
+            <p>You have Submitted this solution</p>
+          ) : (
+            <>
+              {" "}
+              <h2 className="text-3xl font-semibold">Submit Your Solution</h2>
+              <p>
+                Once you’ve completed this challenge, click the button below and
+                fill in the form to submit your solution.
+              </p>
+              <Link
+                href={`/challenges/${task.id}/submit`}
+                className="flex items-center justify-center rounded-md bg-orange-300 px-8 py-2 text-xl font-semibold uppercase italic text-black duration-300 hover:bg-orange-500"
+              >
+                Submit Solution
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </section>
