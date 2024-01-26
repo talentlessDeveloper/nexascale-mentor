@@ -41,9 +41,9 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
 
   const { isLoading: isStartingUserTask, mutate } =
     api.userTask.create.useMutation({
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success("Challenge Successfully Started");
-        void router.push(`/challenges/${task.id}/hub`);
+        void router.push(`/challenges/${task.id}/${data.id}/hub`);
         // TODO: ensure you invalidate all userTasks
         void ctx.userTask.invalidate();
       },
@@ -94,7 +94,7 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
                 </div>
                 <h1 className="text-3xl font-bold">{task.title}</h1>
                 <p>{task.description}</p>
-                {userTaskData ? (
+                {userTaskData?.isStarted ? (
                   <div className="flex flex-col gap-3">
                     <p>Seems Like you have started this challenge</p>
 

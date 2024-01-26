@@ -18,7 +18,7 @@ export const userTaskRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return ctx.db.taskStart.create({
+      return ctx.db.userTask.create({
         data: userTask,
       });
     }),
@@ -39,13 +39,13 @@ export const userTaskRouter = createTRPCRouter({
         ctx.db.task.update({
           where: { id: input.taskId },
           data: {
-            taskStarts: {
+            userTasks: {
               disconnect: { id: input.userTaskId },
             },
           },
         }),
 
-        ctx.db.taskStart.delete({
+        ctx.db.userTask.delete({
           where: {
             id: input.userTaskId,
             userId: input.userId,
@@ -61,10 +61,13 @@ export const userTaskRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      return ctx.db.taskStart.findFirst({
+      return ctx.db.userTask.findFirst({
         where: {
           userId: input.userId,
           taskId: input.taskId,
+        },
+        select: {
+          isStarted: true,
         },
       });
     }),
@@ -78,7 +81,7 @@ export const userTaskRouter = createTRPCRouter({
       if (!ctx.session) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      const task = await ctx.db.taskStart.findFirst({
+      const task = await ctx.db.userTask.findFirst({
         where: {
           taskId: input.taskId,
         },

@@ -103,7 +103,7 @@ export const taskRouter = createTRPCRouter({
         });
       }
       return ctx.db.$transaction([
-        ctx.db.taskStart.deleteMany({
+        ctx.db.userTask.deleteMany({
           where: {
             taskId: input.taskId,
           },

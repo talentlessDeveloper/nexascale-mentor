@@ -1,4 +1,5 @@
 import { type GetStaticProps, type NextPage } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -12,7 +13,7 @@ import { api } from "~/utils/api";
 const Solution: NextPage<{ slug: string }> = ({ slug }) => {
   const [openDeleteSolution, setOpenDeleteSolution] = useState(false);
   const router = useRouter();
-  //   const [showOptions, setShowOptions] = useState(false);
+  const { data: sessionData } = useSession();
 
   const {
     data: solutionData,
@@ -28,6 +29,27 @@ const Solution: NextPage<{ slug: string }> = ({ slug }) => {
       void ctx.solution.invalidate();
       void ctx.solution.getByUserName.invalidate({ username: username! });
       setOpenDeleteSolution(false);
+      const screenshotUrl = solutionData?.screenshot.match(
+        /\/([^/]+)\.[a-zA-Z0-9]+$/,
+      );
+      const body = {
+        folderName: "nexascale-frontend-mentor-solutions",
+        imagePublicId: screenshotUrl ? screenshotUrl[1] : null,
+      };
+
+      fetch("/api/deleteImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+        .then((res) => {
+          console.log("Image deleted", res);
+        })
+        .catch((err) => {
+          console.error(err, "errror deleting image");
+        });
       void router.push(`/profile/${username}`);
     },
     onError: (e) => {
@@ -61,12 +83,14 @@ const Solution: NextPage<{ slug: string }> = ({ slug }) => {
   }
 
   const deleteSolution = () => {
-    if (isDeleting || !solutionData?.id) {
+    if (isDeleting || !solutionData?.id || !sessionData?.user.id) {
       return;
     }
 
     mutate({
       solutionId: solutionData.id,
+      userId: sessionData?.user.id,
+      userTaskId: solutionData.userTaskId!,
     });
   };
 

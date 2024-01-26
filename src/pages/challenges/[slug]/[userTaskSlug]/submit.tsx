@@ -93,9 +93,11 @@ const Submit = () => {
     },
   });
   const router = useRouter();
-  const slug = router.query.slug as string;
+  console.log("==> router query", router.query);
+  const { slug, userTaskSlug } = router.query;
 
   const ctx = api.useUtils();
+  // getUserTaskId to update submitted field
 
   const { isLoading: isSubmitting, mutate } = api.solution.create.useMutation({
     onSuccess: () => {
@@ -135,9 +137,10 @@ const Submit = () => {
       ...restData,
       tags,
       screenshot: selectedImage.url,
-      taskId: slug,
+      taskId: slug as string,
       userId: sessionData?.user.id,
       username: sessionData?.user.username,
+      userTaskId: userTaskSlug as string,
     };
     mutate(solutionsData);
   };

@@ -53,16 +53,16 @@ enum Role {
 }
 
 model User {
-  id            String      @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?     @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  username      String?     @unique
-  role          Role        @default(USER)
-  points        Int         @default(0)
+  username      String?    @unique
+  role          Role       @default(USER)
+  points        Int        @default(0)
   likes         Likes[]
-  startedTasks  TaskStart[]
+  startedTasks  UserTask[]
   solutions     Solution[]
   accounts      Account[]
   sessions      Session[]
@@ -78,32 +78,33 @@ model VerificationToken {
 
 // Task Model
 model Task {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   title       String
-  description String      @db.Text
+  description String   @db.Text
   image       String
   assets      String
-  brief       String      @db.Text
-  started     Boolean     @default(false)
-  submitted   Boolean     @default(false)
-  taskStarts  TaskStart[]
-  userId      String?
-  solutions   Solution[]
+  brief       String   @db.Text
+
+  userTasks UserTask[]
+  userId    String?
+  solutions Solution[]
 
   @@index([userId])
 }
 
 // TaskStart Model
-model TaskStart {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  taskId    String?
-  user      User     @relation(fields: [userId], references: [id])
-  task      Task?    @relation(fields: [taskId], references: [id])
+model UserTask {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  taskId      String?
+  isStarted   Boolean  @default(true)
+  isSubmitted Boolean  @default(false)
+  user        User     @relation(fields: [userId], references: [id])
+  task        Task?    @relation(fields: [taskId], references: [id])
 
   @@index([userId])
   @@index([taskId])
@@ -120,9 +121,11 @@ model Solution {
   tags         String   @db.Text
   screenshot   String // You may choose an appropriate type for storing image data
   taskId       String
+  points       Int?     @default(0)
   task         Task     @relation(fields: [taskId], references: [id])
   likes        Likes[]
   userId       String
+  userTaskId   String?
   username     String?
   user         User     @relation(fields: [userId], references: [id])
 

@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import UserCardInfo from "./user-card-info";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useSession } from "next-auth/react";
 dayjs.extend(relativeTime);
 
 type AllowedTypes = Task | Solution;
@@ -25,6 +26,8 @@ const SinglePageHero = <T extends AllowedTypes>({
   type,
 }: SinglePageHeroProps<T>) => {
   const [showOptions, setShowOptions] = useState(false);
+  const { data: sessionData } = useSession();
+
   const imageUrl = "screenshot" in prop ? prop.screenshot : prop.image;
   const liveSiteLink = "liveSiteLink" in prop ? prop.liveSiteLink : "";
   const githubLink = "githubLink" in prop ? prop.githubLink : "";
@@ -41,15 +44,18 @@ const SinglePageHero = <T extends AllowedTypes>({
     },
   );
   const formatDate = dayjs(prop.createdAt).fromNow();
+  const canYouDelete = sessionData?.user.id === prop.userId;
   return (
     <div className="relative  h-screen">
       <div className="relative z-[2] h-full w-full  bg-black/90 px-5 py-8 lg:px-10 lg:py-20">
-        <Button
-          className="absolute right-7 top-7 h-12 w-12 rounded-full"
-          onClick={() => setShowOptions((prev) => !prev)}
-        >
-          <MoreVerticalIcon />
-        </Button>
+        {canYouDelete || type === "task" ? (
+          <Button
+            className="absolute right-7 top-7 h-12 w-12 rounded-full"
+            onClick={() => setShowOptions((prev) => !prev)}
+          >
+            <MoreVerticalIcon />
+          </Button>
+        ) : null}
         {showOptions ? (
           <ul className="absolute right-9 top-20 divide-y rounded-md bg-white px-5">
             <li className="py-3">
@@ -79,9 +85,14 @@ const SinglePageHero = <T extends AllowedTypes>({
             <p className="text-center text-white">Submitted {formatDate}</p>
           ) : null}
           {type === "task" ? (
-            <h2 className="text-2xl font-semibold text-white lg:text-3xl">
-              Challenge Hub
-            </h2>
+            <>
+              <h2 className="text-2xl font-semibold text-white lg:text-3xl">
+                Challenge Hub
+              </h2>
+              <h2 className="text-2xl font-semibold text-white lg:text-4xl">
+                {prop?.title}
+              </h2>
+            </>
           ) : (
             <h2 className="text-2xl font-semibold text-white lg:text-4xl">
               {prop?.title}

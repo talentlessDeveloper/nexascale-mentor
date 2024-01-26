@@ -11,7 +11,8 @@ import { api } from "~/utils/api";
 
 const Hub = () => {
   const router = useRouter();
-  const slug = router.query.slug;
+  const { slug, userTaskSlug } = router.query;
+  console.log("==> router query ", router.query);
 
   const { data: sessionData } = useSession();
 
@@ -130,7 +131,7 @@ const Hub = () => {
                 fill in the form to submit your solution.
               </p>
               <Link
-                href={`/challenges/${task.id}/submit`}
+                href={`/challenges/${task.id}/${userTaskSlug as string}/submit`}
                 className="flex items-center justify-center rounded-md bg-orange-300 px-8 py-2 text-xl font-semibold uppercase italic text-black duration-300 hover:bg-orange-500"
               >
                 Submit Solution
