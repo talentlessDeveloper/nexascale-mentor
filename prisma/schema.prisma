@@ -1,10 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
 datasource db {
   provider     = "mysql"
   // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
@@ -13,6 +9,10 @@ datasource db {
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 // Necessary for Next auth
@@ -30,7 +30,8 @@ model Account {
   scope                    String?
   id_token                 String? @db.Text
   session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -48,24 +49,23 @@ model Session {
 
 enum Role {
   USER
-
   ADMIN
 }
 
 model User {
-  id            String      @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?     @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  role          Role        @default(USER)
-  username      String?     @unique
+  username      String?    @unique
+  role          Role       @default(USER)
+  points        Int        @default(0)
+  likes         Likes[]
+  startedTasks  UserTask[]
+  solutions     Solution[]
   accounts      Account[]
   sessions      Session[]
-  points        Int         @default(0)
-  likes         Likes[]
-  startedTasks  TaskStart[]
-  solutions     Solution[]
 }
 
 model VerificationToken {
@@ -78,32 +78,33 @@ model VerificationToken {
 
 // Task Model
 model Task {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   title       String
-  description String      @db.Text
+  description String   @db.Text
   image       String
   assets      String
-  brief       String      @db.Text
-  started     Boolean     @default(false)
-  submitted   Boolean     @default(false)
-  taskStarts  TaskStart[]
-  userId      String?
-  solutions   Solution[]
+  brief       String   @db.Text
+
+  userTasks UserTask[]
+  userId    String?
+  solutions Solution[]
 
   @@index([userId])
 }
 
 // TaskStart Model
-model TaskStart {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  taskId    String?
-  user      User     @relation(fields: [userId], references: [id])
-  task      Task?    @relation(fields: [taskId], references: [id])
+model UserTask {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  taskId      String?
+  isStarted   Boolean  @default(true)
+  isSubmitted Boolean  @default(false)
+  user        User     @relation(fields: [userId], references: [id])
+  task        Task?    @relation(fields: [taskId], references: [id])
 
   @@index([userId])
   @@index([taskId])
@@ -120,9 +121,11 @@ model Solution {
   tags         String   @db.Text
   screenshot   String // You may choose an appropriate type for storing image data
   taskId       String
+  points       Int?     @default(0)
   task         Task     @relation(fields: [taskId], references: [id])
   likes        Likes[]
   userId       String
+  userTaskId   String?
   username     String?
   user         User     @relation(fields: [userId], references: [id])
 

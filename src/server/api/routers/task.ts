@@ -55,7 +55,7 @@ export const taskRouter = createTRPCRouter({
         ...input,
       };
 
-      if (ctx.session.user.role !== "admin")
+      if (ctx.session.user.role?.toLowerCase() !== "admin")
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       return ctx.db.task.create({
@@ -68,7 +68,7 @@ export const taskRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
     return ctx.db.task.findMany({
       orderBy: { createdAt: "desc" },
     });
@@ -97,13 +97,13 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      if (ctx.session.user.role !== "admin") {
+      if (ctx.session.user.role?.toLowerCase() !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
         });
       }
       return ctx.db.$transaction([
-        ctx.db.taskStart.deleteMany({
+        ctx.db.userTask.deleteMany({
           where: {
             taskId: input.taskId,
           },
@@ -133,7 +133,7 @@ export const taskRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       const { taskId, ...taskData } = input;
 
-      if (ctx.session.user.role !== "admin") {
+      if (ctx.session.user.role?.toLowerCase() !== "admin") {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 

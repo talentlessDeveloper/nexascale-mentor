@@ -19,19 +19,39 @@ export const solutionsRouter = createTRPCRouter({
         taskId: z.string(),
         userId: z.string(),
         username: z.string(),
+        userTaskId: z.string(),
       }),
     )
     .mutation(({ ctx, input }) => {
       const solution = {
         ...input,
+        points: 5,
       };
       if (!ctx.session) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return ctx.db.solution.create({
-        data: solution,
-      });
+      return ctx.db.$transaction([
+        ctx.db.solution.create({
+          data: solution,
+        }),
+        ctx.db.userTask.update({
+          where: {
+            id: input.userTaskId,
+          },
+          data: {
+            isSubmitted: true,
+          },
+        }),
+        ctx.db.user.update({
+          where: {
+            id: input.userId,
+          },
+          data: {
+            points: { increment: 5 },
+          },
+        }),
+      ]);
     }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.solution.findMany({
@@ -50,5 +70,80 @@ export const solutionsRouter = createTRPCRouter({
           username: input.username,
         },
       });
+    }),
+  getById: publicProcedure
+    .input(
+      z.object({
+        solutionId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findUnique({
+        where: {
+          id: input.solutionId,
+        },
+      });
+    }),
+  hasSubmitted: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        userId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.solution.findFirst({
+        where: {
+          userId: input.userId,
+          taskId: input.taskId,
+        },
+      });
+    }),
+  delete: protectedProcedure
+    .input(
+      z.object({
+        solutionId: z.string(),
+        userId: z.string(),
+        userTaskId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.id !== input.userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      const solutionPoints = await ctx.db.solution.findUnique({
+        where: {
+          id: input.solutionId,
+        },
+        select: {
+          points: true,
+        },
+      });
+
+      return ctx.db.$transaction([
+        ctx.db.solution.delete({
+          where: {
+            id: input.solutionId,
+          },
+        }),
+        ctx.db.userTask.update({
+          where: {
+            id: input.userTaskId,
+          },
+          data: {
+            isSubmitted: false,
+          },
+        }),
+        ctx.db.user.update({
+          where: {
+            id: input.userId,
+          },
+          data: {
+            points: { decrement: solutionPoints?.points ?? 0 },
+          },
+        }),
+      ]);
     }),
 });

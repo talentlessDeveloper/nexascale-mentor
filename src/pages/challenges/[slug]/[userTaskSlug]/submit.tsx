@@ -23,6 +23,7 @@ import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { useImageUpload } from "~/hooks/useImageUpload";
 import { frontendTechOptions } from "~/lib/dummyData";
+import { cn } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -37,9 +38,14 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 ];
 
 const formSchema = z.object({
-  title: z.string().max(70).min(5, {
-    message: "Solution Title is required",
-  }),
+  title: z
+    .string()
+    .max(70, {
+      message: "Solution Title should not exceed 70 characters",
+    })
+    .min(5, {
+      message: "Solution Title requires a minimum of 5 characters",
+    }),
   githubLink: z.string().min(10),
   liveSiteLink: z.string().min(10),
   tags: z.array(z.record(z.string().trim())).max(5, {
@@ -87,15 +93,18 @@ const Submit = () => {
     },
   });
   const router = useRouter();
-  const slug = router.query.slug as string;
+  console.log("==> router query", router.query);
+  const { slug, userTaskSlug } = router.query;
 
   const ctx = api.useUtils();
+  // getUserTaskId to update submitted field
 
   const { isLoading: isSubmitting, mutate } = api.solution.create.useMutation({
     onSuccess: () => {
       form.reset();
       void ctx.solution.getAll.invalidate();
       toast.success("Task Submitted successfully");
+      void router.push("/solutions");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -128,9 +137,10 @@ const Submit = () => {
       ...restData,
       tags,
       screenshot: selectedImage.url,
-      taskId: slug,
+      taskId: slug as string,
       userId: sessionData?.user.id,
       username: sessionData?.user.username,
+      userTaskId: userTaskSlug as string,
     };
     mutate(solutionsData);
   };
@@ -164,8 +174,16 @@ const Submit = () => {
                           placeholder="e.g Responsive Landing Page Using CSS Grid"
                           {...field}
                         />
-                        <p className="text-right text-xs">
-                          {70 - form.watch("title").length} characters remaining
+                        <p
+                          className={cn("text-right text-xs", {
+                            "text-red-500": form.watch("title").length >= 70,
+                          })}
+                        >
+                          {form.watch("title").length >= 70
+                            ? "You have exceed the character limit"
+                            : `${
+                                70 - form.watch("title").length
+                              } characters remaining`}{" "}
                         </p>
                       </>
                     </FormControl>
