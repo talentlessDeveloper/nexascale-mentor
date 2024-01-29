@@ -99,7 +99,7 @@ const SinglePageTask = ({ task }: SinglePageTaskProps) => {
                     <p>Seems Like you have started this challenge</p>
 
                     <Link
-                      href={`/challenges/${task.id}/hub`}
+                      href={`/challenges/${task.id}/${userTaskData.id}/hub`}
                       className="flex h-auto max-w-[280px] items-center justify-center rounded-xl bg-accent py-3 text-xl hover:bg-accent/75 "
                     >
                       Visit Challenge Hub

@@ -7,7 +7,13 @@ import { type Solution } from "../tasks/types/ITask";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { api } from "~/utils/api";
 import UserCardInfo from "../shared/user-card-info";
+import dynamic from "next/dynamic";
 dayjs.extend(relativeTime);
+
+const MDPreview = dynamic(
+  () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
+  { ssr: false },
+);
 
 type SolutionCardProps = {
   solution: Solution;
@@ -67,7 +73,8 @@ const SolutionCard = ({ solution, pathname }: SolutionCardProps) => {
           <UserCardInfo userData={userData} />
         ) : null}
         <div className="py-3">
-          <p>{solution.description}</p>
+          <MDPreview source={solution.description} />
+          {/* <p>{solution.description}</p> */}
         </div>
       </div>
     </div>
