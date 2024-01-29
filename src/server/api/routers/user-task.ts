@@ -1,6 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { TRPCError } from "@trpc/server";
 
 export const userTaskRouter = createTRPCRouter({
   create: protectedProcedure
@@ -68,6 +68,7 @@ export const userTaskRouter = createTRPCRouter({
         },
         select: {
           isStarted: true,
+          id: true,
         },
       });
     }),
@@ -88,5 +89,36 @@ export const userTaskRouter = createTRPCRouter({
       });
       if (!task) throw new TRPCError({ code: "NOT_FOUND" });
       return task;
+    }),
+  getAll: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      if (!ctx.session.user) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      return ctx.db.userTask.findMany({
+        where: {
+          userId: input.userId,
+        },
+        include: {
+          task: {
+            select: {
+              createdAt: true,
+              updatedAt: true,
+              title: true,
+              description: true,
+              image: true,
+              assets: true,
+              brief: true,
+            },
+          },
+        },
+      });
     }),
 });
